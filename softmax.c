@@ -4,10 +4,10 @@
 void softmax (float* input_feature_map,
               float* output_probability_distribution) {
     /* please do INITIALIZATION before input output_feature_map */
-	/* ------- DIMENSION SETTING  ---------- *
+    /* ------- DIMENSION SETTING  ---------- *
 
-	 * input_feature_map:		            (SM_BATCH_SIZE,     SM_INPUT_SIZE)
-	 * output_probability_distribution:     (SM_BATCH_SIZE,     SM_OUTPUT_SIZE) =
+     * input_feature_map:		            (SM_BATCH_SIZE,     SM_INPUT_SIZE)
+     * output_probability_distribution:     (SM_BATCH_SIZE,     SM_OUTPUT_SIZE) =
      *                                      (SM_BATCH_SIZE,     SM_INPUT_SIZE) */
 
     /* used to cache the exponential result */

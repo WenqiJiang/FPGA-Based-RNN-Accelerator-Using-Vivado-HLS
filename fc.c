@@ -4,12 +4,12 @@ void fc(float* input_feature_map,
         float* weights,
         float* output_feature_map) {
     /* please do INITIALIZATION before input output_feature_map */
-	/* ------- DIMENSION SETTING  ---------- *
+    /* ------- DIMENSION SETTING  ---------- *
 
-	 * input_feature_map:		(FC_BATCH_SIZE,     FC_INPUT_SIZE)
-	 * weights:			        (FC_WEIGHT_DIM1,    FC_WEIGHT_DIM2) =
-	 					        (FC_OUTPUT_SIZE,    FC_INPUT_SIZE)
-	 * output_feature_map: 	    (FC_BATCH_SIZE,     FC_OUTPUT_SIZE) */
+     * input_feature_map:		(FC_BATCH_SIZE,     FC_INPUT_SIZE)
+     * weights:			        (FC_WEIGHT_DIM1,    FC_WEIGHT_DIM2) =
+                                 (FC_OUTPUT_SIZE,    FC_INPUT_SIZE)
+     * output_feature_map: 	    (FC_BATCH_SIZE,     FC_OUTPUT_SIZE) */
 
     for (int batch_index = 0; batch_index < FC_BATCH_SIZE; batch_index++) {
         /* compute each sample in a batch */
