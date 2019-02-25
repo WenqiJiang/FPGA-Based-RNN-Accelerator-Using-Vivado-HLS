@@ -1,11 +1,10 @@
 #include <stdio.h>
-// #include <math.h>
 
 #include "constants.h"
 #include "rnn.h"
 #include "params_init.h"
 #include "fc.h"
-// #include "softmax.h"
+#include "softmax.h"
 //#include "testing.h"
 
 int main(int argc, char *argv[])
@@ -27,7 +26,7 @@ int main(int argc, char *argv[])
 	/* do inference and print the result */
 
 	rnn(last_state, input, weights, output);
-	//	print_output(output)
+	//	print output
 	for (int i = 0; i < BATCH_SIZE; i++) {
 		for (int j = 0; j < STATE_SIZE; j++) {
 			printf("%f	", output[i * BATCH_SIZE + j]);
@@ -35,11 +34,9 @@ int main(int argc, char *argv[])
 		printf("\n");
 	}
 
-	// printf("%f \n", exp(1.5));
     printf("%s", "Press 2 and ENTER to end the program");
     char str2[10];
     scanf("%s", str2);
-
 
 	return 0;
 }

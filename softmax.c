@@ -1,6 +1,5 @@
-#include <math.h>       /* import exponential function: exp (val) */
-
 #include "constants.h"
+#include "softmax.h"
 
 void softmax (float* input_feature_map,
               float* output_probability_distribution) {
@@ -30,7 +29,7 @@ void softmax (float* input_feature_map,
                                             input_feature_map_index;
             /* compute it, cache it */
             input_feature_map_exp[input_feature_map_index] = 
-                        exp(input_feature_map[input_feature_map_index]);
+                            exp(input_feature_map[input_feature_map_index]);
             
             /* partial sum */
             denominator += input_feature_map_exp[input_feature_map_index];
