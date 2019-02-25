@@ -14,12 +14,13 @@
 # For example, use "-lm" for the math library
 # LDLIBS =
 
-main: main.o params_init.o rnn.o fc.o
+main: main.o params_init.o rnn.o fc.o #softmax.o
 
 main.o: main.c 
 params_init.o: params_init.c
 rnn.o: rnn.c
 fc.o: fc.c
+# softmax.o: softmax.c
 
 clean:
 	rm *.o main
