@@ -2,6 +2,7 @@
 #include "constants.h"
 #include "rnn.h"
 #include "params_init.h"
+#include "fc.h"
 //#include "testing.h"
 
 int main(int argc, char *argv[])

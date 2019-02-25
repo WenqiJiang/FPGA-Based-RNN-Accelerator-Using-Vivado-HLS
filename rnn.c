@@ -4,7 +4,7 @@ void rnn(float* last_state,
 		 float* input_state, 
 		 float* weights, 
 		 float* output_state) {
-			 	
+	/* please do INITIALIZATION before input output_state */
 	/* ------- DIMENSION SETTING  ---------- *
 
 	 * last_state:  	(BATCH_SIZE, STATE_SIZE) 
@@ -17,7 +17,7 @@ void rnn(float* last_state,
 		/* placeholder: loop naming */
 		/* compute each sample in a batch */
 
-		for(int output_state_index = 0; output_state_index < WEIGHT_DIM1; output_state_index++) { 
+		for (int output_state_index = 0; output_state_index < WEIGHT_DIM1; output_state_index++) { 
 			/* placeholder: loop naming */
 			/* compute output_state[batch_index][output_state_index] */
 
@@ -30,7 +30,7 @@ void rnn(float* last_state,
 			int current_output_state_index = batch_index * STATE_SIZE + output_state_index;
 
 			/* do multiplication: weights by last state */
-			for(int last_state_index = 0; last_state_index < STATE_SIZE; 
+			for (int last_state_index = 0; last_state_index < STATE_SIZE; 
 				last_state_index++) {
 				/* placeholder: loop naming */
 
