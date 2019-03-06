@@ -1,0 +1,38 @@
+# analysis of h5log.out
+
+# first dim -> input size
+# second dim -> output size
+
+line 85:
+	all contained layers
+	"embedding_1", "masking_1\000\000", "lstm_1\000\000\000\000\000", "dense_1\000\000\000\000", "dropout_1\000\000", "dense_2\000\000\000\000"
+
+line 88:
+	dense 1
+	bias 128
+	kernel 64, 128	# take state as input, output to dense 2
+
+line 116:
+	dense 2
+	bias 13677
+	kernel 128, 13677 # take dense 1 output as input, output P distribution
+
+line 144:
+	dropout 1
+	nothing
+
+line 152:
+	embedding 1
+	embedding 1 13677, 100 # take one hot vector as input, output 100d-word vector
+
+line 174:
+	lstm 1
+	bias 256 # 4 gates, each output 64d, Wi, Wf, Wo, Wc
+	kernel 100, 256	# 4 gates, all take word vector and last state as inputs
+	recurrent_kernel 64, 256 # only output ht, a 64d vector to next state and FC layer
+
+line 208
+	masking 1
+	nothing
+
+

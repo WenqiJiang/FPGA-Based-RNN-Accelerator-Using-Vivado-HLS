@@ -1,0 +1,371 @@
+HDF5 "pre-trained-rnn.h5" {
+GROUP "/" {
+   ATTRIBUTE "backend" {
+      DATATYPE  H5T_STRING {
+         STRSIZE H5T_VARIABLE;
+         STRPAD H5T_STR_NULLTERM;
+         CSET H5T_CSET_ASCII;
+         CTYPE H5T_C_S1;
+      }
+      DATASPACE  SCALAR
+      DATA {
+         "tensorflow"
+      }
+   }
+   ATTRIBUTE "keras_version" {
+      DATATYPE  H5T_STRING {
+         STRSIZE H5T_VARIABLE;
+         STRPAD H5T_STR_NULLTERM;
+         CSET H5T_CSET_ASCII;
+         CTYPE H5T_C_S1;
+      }
+      DATASPACE  SCALAR
+      DATA {
+         "2.2.4"
+      }
+   }
+   ATTRIBUTE "model_config" {
+      DATATYPE  H5T_STRING {
+         STRSIZE H5T_VARIABLE;
+         STRPAD H5T_STR_NULLTERM;
+         CSET H5T_CSET_ASCII;
+         CTYPE H5T_C_S1;
+      }
+      DATASPACE  SCALAR
+      DATA {
+         "{"class_name": "Sequential", "config": {"name": "sequential_1", "layers": [{"class_name": "Embedding", "config": {"name": "embedding_1", "trainable": false, "batch_input_shape": [null, null], "dtype": "float32", "input_dim": 13677, "output_dim": 100, "embeddings_initializer": {"class_name": "RandomUniform", "config": {"minval": -0.05, "maxval": 0.05, "seed": null}}, "embeddings_regularizer": null, "activity_regularizer": null, "embeddings_constraint": null, "mask_zero": true, "input_length": null}}, {"class_name": "Masking", "config": {"name": "masking_1", "trainable": true, "mask_value": 0.0}}, {"class_name": "LSTM", "config": {"name": "lstm_1", "trainable": true, "return_sequences": false, "return_state": false, "go_backwards": false, "stateful": false, "unroll": false, "units": 64, "activation": "tanh", "recurrent_activation": "hard_sigmoid", "use_bias": true, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"scale": 1.0, "mode": "fan_avg", "distribution": "uniform", "seed": null}}, "recurrent_initializer": {"class_name": "Orthogonal", "config": {"gain": 1.0, "seed": null}}, "bias_initializer": {"class_name": "Zeros", "config": {}}, "unit_forget_bias": true, "kernel_regularizer": null, "recurrent_regularizer": null, "bias_regularizer": null, "activity_regularizer": null, "kernel_constraint": null, "recurrent_constraint": null, "bias_constraint": null, "dropout": 0.1, "recurrent_dropout": 0.1, "implementation": 1}}, {"class_name": "Dense", "config": {"name": "dense_1", "trainable": true, "units": 128, "activation": "relu", "use_bias": true, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"scale": 1.0, "mode": "fan_avg", "distribution": "uniform", "seed": null}}, "bias_initializer": {"class_name": "Zeros", "config": {}}, "kernel_regularizer": null, "bias_regularizer": null, "activity_regularizer": null, "kernel_constraint": null, "bias_constraint": null}}, {"class_name": "Dropout", "config": {"name": "dropout_1", "trainable": true, "rate": 0.5, "noise_shape": null, "seed": null}}, {"class_name": "Dense", "config": {"name": "dense_2", "trainable": true, "units": 13677, "activation": "softmax", "use_bias": true, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"scale": 1.0, "mode": "fan_avg", "distribution": "uniform", "seed": null}}, "bias_initializer": {"class_name": "Zeros", "config": {}}, "kernel_regularizer": null, "bias_regularizer": null, "activity_regularizer": null, "kernel_constraint": null, "bias_constraint": null}}]}}"
+      }
+   }
+   ATTRIBUTE "training_config" {
+      DATATYPE  H5T_STRING {
+         STRSIZE H5T_VARIABLE;
+         STRPAD H5T_STR_NULLTERM;
+         CSET H5T_CSET_ASCII;
+         CTYPE H5T_C_S1;
+      }
+      DATASPACE  SCALAR
+      DATA {
+         "{"optimizer_config": {"class_name": "Adam", "config": {"lr": 0.0010000000474974513, "beta_1": 0.8999999761581421, "beta_2": 0.9990000128746033, "decay": 0.0, "epsilon": 1e-07, "amsgrad": false}}, "loss": "categorical_crossentropy", "metrics": ["accuracy"], "sample_weight_mode": null, "loss_weights": null}"
+      }
+   }
+   GROUP "model_weights" {
+      ATTRIBUTE "backend" {
+         DATATYPE  H5T_STRING {
+            STRSIZE H5T_VARIABLE;
+            STRPAD H5T_STR_NULLTERM;
+            CSET H5T_CSET_ASCII;
+            CTYPE H5T_C_S1;
+         }
+         DATASPACE  SCALAR
+         DATA {
+            "tensorflow"
+         }
+      }
+      ATTRIBUTE "keras_version" {
+         DATATYPE  H5T_STRING {
+            STRSIZE H5T_VARIABLE;
+            STRPAD H5T_STR_NULLTERM;
+            CSET H5T_CSET_ASCII;
+            CTYPE H5T_C_S1;
+         }
+         DATASPACE  SCALAR
+         DATA {
+            "2.2.4"
+         }
+      }
+      ATTRIBUTE "layer_names" {
+         DATATYPE  H5T_STRING {
+            STRSIZE 11;
+            STRPAD H5T_STR_NULLPAD;
+            CSET H5T_CSET_ASCII;
+            CTYPE H5T_C_S1;
+         }
+         DATASPACE  SIMPLE { ( 6 ) / ( 6 ) }
+         DATA {
+            "embedding_1", "masking_1\000\000", "lstm_1\000\000\000\000\000", "dense_1\000\000\000\000", "dropout_1\000\000", "dense_2\000\000\000\000"
+         }
+      }
+      GROUP "dense_1" {
+         ATTRIBUTE "weight_names" {
+            DATATYPE  H5T_STRING {
+               STRSIZE 16;
+               STRPAD H5T_STR_NULLPAD;
+               CSET H5T_CSET_ASCII;
+               CTYPE H5T_C_S1;
+            }
+            DATASPACE  SIMPLE { ( 2 ) / ( 2 ) }
+            DATA {
+               "dense_1/kernel:0", "dense_1/bias:0\000\000"
+            }
+         }
+         GROUP "dense_1" {
+            DATASET "bias:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 128 ) / ( 128 ) }
+               DATA {
+               }
+            }
+            DATASET "kernel:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 64, 128 ) / ( 64, 128 ) }
+               DATA {
+               }
+            }
+         }
+      }
+      GROUP "dense_2" {
+         ATTRIBUTE "weight_names" {
+            DATATYPE  H5T_STRING {
+               STRSIZE 16;
+               STRPAD H5T_STR_NULLPAD;
+               CSET H5T_CSET_ASCII;
+               CTYPE H5T_C_S1;
+            }
+            DATASPACE  SIMPLE { ( 2 ) / ( 2 ) }
+            DATA {
+               "dense_2/kernel:0", "dense_2/bias:0\000\000"
+            }
+         }
+         GROUP "dense_2" {
+            DATASET "bias:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 13677 ) / ( 13677 ) }
+               DATA {
+               }
+            }
+            DATASET "kernel:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 128, 13677 ) / ( 128, 13677 ) }
+               DATA {
+               }
+            }
+         }
+      }
+      GROUP "dropout_1" {
+         ATTRIBUTE "weight_names" {
+            DATATYPE  H5T_IEEE_F64LE
+            DATASPACE  SIMPLE { ( 0 ) / ( 0 ) }
+            DATA {
+            }
+         }
+      }
+      GROUP "embedding_1" {
+         ATTRIBUTE "weight_names" {
+            DATATYPE  H5T_STRING {
+               STRSIZE 24;
+               STRPAD H5T_STR_NULLPAD;
+               CSET H5T_CSET_ASCII;
+               CTYPE H5T_C_S1;
+            }
+            DATASPACE  SIMPLE { ( 1 ) / ( 1 ) }
+            DATA {
+               "embedding_1/embeddings:0"
+            }
+         }
+         GROUP "embedding_1" {
+            DATASET "embeddings:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 13677, 100 ) / ( 13677, 100 ) }
+               DATA {
+               }
+            }
+         }
+      }
+      GROUP "lstm_1" {
+         ATTRIBUTE "weight_names" {
+            DATATYPE  H5T_STRING {
+               STRSIZE 25;
+               STRPAD H5T_STR_NULLPAD;
+               CSET H5T_CSET_ASCII;
+               CTYPE H5T_C_S1;
+            }
+            DATASPACE  SIMPLE { ( 3 ) / ( 3 ) }
+            DATA {
+               "lstm_1/kernel:0\000\000\000\000\000\000\000\000\000\000", "lstm_1/recurrent_kernel:0", "lstm_1/bias:0\000\000\000\000\000\000\000\000\000\000\000\000"
+            }
+         }
+         GROUP "lstm_1" {
+            DATASET "bias:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 256 ) / ( 256 ) }
+               DATA {
+               }
+            }
+            DATASET "kernel:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 100, 256 ) / ( 100, 256 ) }
+               DATA {
+               }
+            }
+            DATASET "recurrent_kernel:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 64, 256 ) / ( 64, 256 ) }
+               DATA {
+               }
+            }
+         }
+      }
+      GROUP "masking_1" {
+         ATTRIBUTE "weight_names" {
+            DATATYPE  H5T_IEEE_F64LE
+            DATASPACE  SIMPLE { ( 0 ) / ( 0 ) }
+            DATA {
+            }
+         }
+      }
+   }
+   GROUP "optimizer_weights" {
+      ATTRIBUTE "weight_names" {
+         DATATYPE  H5T_STRING {
+            STRSIZE 27;
+            STRPAD H5T_STR_NULLPAD;
+            CSET H5T_CSET_ASCII;
+            CTYPE H5T_C_S1;
+         }
+         DATASPACE  SIMPLE { ( 22 ) / ( 22 ) }
+         DATA {
+            "Adam/iterations:0\000\000\000\000\000\000\000\000\000\000", "training/Adam/Variable:0\000\000\000", "training/Adam/Variable_1:0\000", "training/Adam/Variable_2:0\000", "training/Adam/Variable_3:0\000", "training/Adam/Variable_4:0\000", "training/Adam/Variable_5:0\000", "training/Adam/Variable_6:0\000", "training/Adam/Variable_7:0\000", "training/Adam/Variable_8:0\000",
+            "training/Adam/Variable_9:0\000", "training/Adam/Variable_10:0", "training/Adam/Variable_11:0", "training/Adam/Variable_12:0", "training/Adam/Variable_13:0", "training/Adam/Variable_14:0", "training/Adam/Variable_15:0", "training/Adam/Variable_16:0", "training/Adam/Variable_17:0", "training/Adam/Variable_18:0", "training/Adam/Variable_19:0", "training/Adam/Variable_20:0"
+         }
+      }
+      GROUP "Adam" {
+         DATASET "iterations:0" {
+            DATATYPE  H5T_STD_I64LE
+            DATASPACE  SCALAR
+            DATA {
+            }
+         }
+      }
+      GROUP "training" {
+         GROUP "Adam" {
+            DATASET "Variable:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 100, 256 ) / ( 100, 256 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_10:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 64, 128 ) / ( 64, 128 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_11:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 128 ) / ( 128 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_12:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 128, 13677 ) / ( 128, 13677 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_13:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 13677 ) / ( 13677 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_14:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 1 ) / ( 1 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_15:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 1 ) / ( 1 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_16:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 1 ) / ( 1 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_17:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 1 ) / ( 1 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_18:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 1 ) / ( 1 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_19:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 1 ) / ( 1 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_1:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 64, 256 ) / ( 64, 256 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_20:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 1 ) / ( 1 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_2:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 256 ) / ( 256 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_3:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 64, 128 ) / ( 64, 128 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_4:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 128 ) / ( 128 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_5:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 128, 13677 ) / ( 128, 13677 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_6:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 13677 ) / ( 13677 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_7:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 100, 256 ) / ( 100, 256 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_8:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 64, 256 ) / ( 64, 256 ) }
+               DATA {
+               }
+            }
+            DATASET "Variable_9:0" {
+               DATATYPE  H5T_IEEE_F32LE
+               DATASPACE  SIMPLE { ( 256 ) / ( 256 ) }
+               DATA {
+               }
+            }
+         }
+      }
+   }
+}
+}
