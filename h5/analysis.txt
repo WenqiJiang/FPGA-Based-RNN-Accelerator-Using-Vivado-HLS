@@ -11,11 +11,13 @@ line 88:
 	dense 1
 	bias 128
 	kernel 64, 128	# take state as input, output to dense 2
+	params:8 320
 
 line 116:
 	dense 2
 	bias 13677
 	kernel 128, 13677 # take dense 1 output as input, output P distribution
+	params:1 764 333
 
 line 144:
 	dropout 1
@@ -24,15 +26,31 @@ line 144:
 line 152:
 	embedding 1
 	embedding 1 13677, 100 # take one hot vector as input, output 100d-word vector
+	params: 1 367 700
 
 line 174:
 	lstm 1
 	bias 256 # 4 gates, each output 64d, Wi, Wf, Wo, Wc
 	kernel 100, 256	# 4 gates, all take word vector and last state as inputs
 	recurrent_kernel 64, 256 # only output ht, a 64d vector to next state and FC layer
+	params: 43 008
 
 line 208
 	masking 1
 	nothing
 
 
+#####################################
+#		analysis dset.asci			#
+#####################################
+
+total params: 6 812 358
+
+list all contents:
+h5dump -n pre-trained-rnn.h5
+
+open an attribute
+h5dump -a "/model_weights/dense_1/weight_names" pre-trained-rnn.h5
+
+view a dataset (show weights)
+ h5dump -d "/model_weights/dense_1/dense_1/bias:0" pre-trained-rnn.h5
