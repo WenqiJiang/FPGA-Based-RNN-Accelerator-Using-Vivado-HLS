@@ -1,7 +1,7 @@
 # f = open("./dset.asci", "r")
 # f.split(",")
 
-with open("./dset.asci", 'r') as myfile:
+with open("./dense_1_bias.txt", 'r') as myfile:
     data = myfile.read().split(',')
     count = len(data)
     print(count)

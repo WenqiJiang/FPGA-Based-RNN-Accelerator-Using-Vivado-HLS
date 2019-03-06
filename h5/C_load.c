@@ -1,33 +1,19 @@
-#include "hdf5.h"
-#define FILE "dset.h5"
+#include <stdio.h>
 
-int main() {
+#define LEN 128
 
-   hid_t       file_id, dataset_id;  /* identifiers */
-   herr_t      status;
-   int         i, j, dset_data[4][6];
+int main(void)
+{
+  FILE *myfile;
+  float bias[LEN];
 
-   /* Initialize the dataset. */
-   for (i = 0; i < 4; i++)
-      for (j = 0; j < 6; j++)
-         dset_data[i][j] = i * 6 + j + 1;
+  myfile=fopen("./dense_1_bias.txt", "r");
 
-   /* Open an existing file. */
-   file_id = H5Fopen("./pre-trained-rnn.h5", H5F_ACC_RDWR, H5P_DEFAULT);
+  for(int i = 0; i < LEN; i++)
+  {
+      fscanf(myfile,"%f", &bias[i]);
+      printf("%d: %f \n", i, bias[i]);
+  }
 
-   /* Open an existing dataset. */
-   dataset_id = H5Dopen2(file_id, "/model_weights/dense_1/dense_1/bias:0", H5P_DEFAULT);
-
-   /* Write the dataset. */
-   status = H5Dwrite(dataset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, 
-                     dset_data);
-
-   status = H5Dread(dataset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, 
-                    dset_data);
-
-   /* Close the dataset. */
-   status = H5Dclose(dataset_id);
-
-   /* Close the file. */
-   status = H5Fclose(file_id);
+  fclose(myfile);
 }
