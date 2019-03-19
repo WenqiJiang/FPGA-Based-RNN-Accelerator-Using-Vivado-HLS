@@ -16,13 +16,14 @@
 
 LDLIBS = -lm
 
-main: main.o params_init.o rnn.o fc.o softmax.o
+main: main.o params_init.o rnn.o fc.o softmax.o activation.o
 
 main.o: main.c 
 params_init.o: params_init.c
 rnn.o: rnn.c
 fc.o: fc.c
 softmax.o: softmax.c
+activation.o: activation.c
 
 clean:
 	rm *.o main

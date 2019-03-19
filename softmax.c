@@ -1,5 +1,5 @@
 #include "constants.h"
-#include "softmax.h"
+#include <math.h>       /* import exponential function: exp (val) */
 
 void softmax (float* input_feature_map,
               float* output_probability_distribution) {
