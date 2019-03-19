@@ -4,6 +4,10 @@ This model is trained with pre-trained GloVe word vectors. For those words don't
 
 To split the H5 file into individual components (split it into weights matrix and bias vector in each layers), we first use a package called h5dump to analyze the h5 file. Then, we use a python program to split it.
 
+(-1) To clean all the output files, run ./clean.sh
+
+(0) If you want to do all the following stuff in one shot, simply run "./generate_all.sh". This bash file will do everything for you and you can close this readme right now. If you are curious about the data preprocessing detail, read the following.
+
 (1) Analyze the components in the H5 file
 	h5dump -n train-embeddings-rnn-50.h5
 
@@ -23,9 +27,9 @@ To split the H5 file into individual components (split it into weights matrix an
 	h5dump -d "/model_weights/embedding_1/embedding_1/embeddings:0" train-embeddings-rnn-50.h5
 
 (3) Split them into individual files
-	"splitH5.py" is our code to split H5 files, we write a bash file "split.sh" to run the python file multiple times. Simply run "./split.sh". We can neglect warnings.
+	"splitH5.py" is our code to split H5 files, we write a bash file "split.sh" to run the python file multiple times. Simply run "./split_h5.sh". We can neglect warnings.
 	
-	We can see these weights by typing, for example, "h5dump -d "/embedding_1/embeddings:0"  embedding_1_embeddings.h5". These commands are in the comments of "split.sh".
+	We can see these weights by typing, for example, "h5dump -d "/embedding_1/embeddings:0"  embedding_1_embeddings.h5". These commands are in the comments of "split_h5.sh".
 
 (4) Convert H5 to txt
 	run "./h5_to_txt.sh", below is an example command
@@ -45,4 +49,6 @@ To split the H5 file into individual components (split it into weights matrix an
 	Run "./remove_comma.sh", which calls "remove_comma.py"
 
 (6) Load weights into C
-	We can load these txt files into C now, a template of it is in "C_laod.c"
+	We can load these txt files into C now, a template of it is in "load_weights.c"
+	gcc -o a.out load_weights.c
+
