@@ -16,7 +16,7 @@
 
 LDLIBS = -lm
 
-main: main.o params_init.o rnn.o fc.o softmax.o activation.o
+main: main.o params_init.o rnn.o fc.o softmax.o activation.o load_data.o
 
 main.o: main.c 
 params_init.o: params_init.c
@@ -24,6 +24,7 @@ rnn.o: rnn.c
 fc.o: fc.c
 softmax.o: softmax.c
 activation.o: activation.c
+load_data.o: load_data.c
 
 clean:
 	rm *.o main
