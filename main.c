@@ -44,7 +44,6 @@ int main(int argc, char *argv[])
     int* argmax_result = malloc(sizeof(int) * SM_BATCH_SIZE);
     /* initialize last state to 0 */
     zero_init(rnn_last_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
-    // zero_init(argmax_result, SM_BATCH_SIZE);
 
     /* load model in */
     load_float("./model/embedding_1_embeddings.txt", WORD_NUM * WORD_SIZE, word_embedding);
@@ -55,7 +54,7 @@ int main(int argc, char *argv[])
     load_float("./model/dense_1_bias.txt", FC_OUTPUT_SIZE, fc_bias);
     load_float("./model/dense_1_kernel.txt", FC_INPUT_SIZE * FC_OUTPUT_SIZE, fc_kernel);
 
-    print_float(word_embedding, WORD_SIZE);
+    // print_float(word_embedding, WORD_SIZE);
     // print_float(word_embedding + WORD_SIZE, WORD_SIZE);
     /* load dataset in */
     #define SAMPLE_NUM 1000
@@ -72,27 +71,35 @@ int main(int argc, char *argv[])
             int sample_index = j * SEQ_LEN + i;
             int word_index = sequences[sample_index];
             // printf("%d\n", word_index);
+            // int word_index = i + 1;
             int word_embedding_index = word_index * WORD_SIZE;
             int rnn_input_state_index = j * RNN_INPUT_SIZE;
             copy_float(&word_embedding[word_embedding_index], 
                        &rnn_input_state[rnn_input_state_index], RNN_INPUT_SIZE);
         }
+
+        // if (i == SEQ_LEN - 1)
+        //     print_float(rnn_last_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
         // print_float(rnn_input_state, RNN_BATCH_SIZE * RNN_INPUT_SIZE);
         rnn(rnn_last_state, rnn_input_state, rnn_bias, rnn_kernel, rnn_recurrent_kernel, rnn_output_state);
         act_tanh(rnn_output_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
-        // print_float(rnn_output_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
+        // if (i == SEQ_LEN - 1)
+        //     print_float(rnn_output_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
         float* temp = rnn_last_state;
         rnn_last_state = rnn_output_state;
         rnn_output_state = temp;
+
+        // if (i == 0)
+        //     print_float(rnn_last_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
     }
     // print_float(rnn_last_state, RNN_STATE_SIZE);
     fc(rnn_last_state, fc_bias, fc_kernel, fc_output_feature_map);
     // act_relu(fc_output_feature_map, FC_BATCH_SIZE * FC_OUTPUT_SIZE);
     softmax(fc_output_feature_map, softmax_result);
-    // print_float(softmax_result, SM_CLASS_SIZE);
+    print_float(softmax_result, SM_CLASS_SIZE);
     argmax(fc_output_feature_map, argmax_result);
     print_int(argmax_result, SM_BATCH_SIZE);
-    printf("%s", "Press any key then ENTER to end the program");
+    printf("%s", "Press any key then ENTER to end the program\n");
     char str2[10];
     scanf("%s", str2);
 

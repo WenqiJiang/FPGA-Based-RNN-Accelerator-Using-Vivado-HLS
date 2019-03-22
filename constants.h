@@ -13,7 +13,7 @@ typedef int bool;
 #define WORD_SIZE           100
 
 /* for RNN layers */
-#define RNN_BATCH_SIZE      1//64
+#define RNN_BATCH_SIZE      64
 #define RNN_STATE_SIZE      128         /* state length */
 #define RNN_INPUT_SIZE      100         /* input of RNN layer, e.g. word vector */ 
 /* RNN layer dimension:
@@ -31,7 +31,7 @@ typedef int bool;
                        bias     */
 
 /* for Fully-Connected layers */
-#define FC_BATCH_SIZE   1//64
+#define FC_BATCH_SIZE   64
 #define FC_INPUT_SIZE   128       /* same as STATE_SIZE */
 #define FC_OUTPUT_SIZE  16192    /* say, vocabulary number */
 /* FC layer dimension:
@@ -46,7 +46,7 @@ typedef int bool;
                                  bias */
 
 /* for softmax layers */
-#define SM_BATCH_SIZE   1//64
+#define SM_BATCH_SIZE   64
 #define SM_CLASS_SIZE   16192    /* how many classes */
 /* Softmax layer dimension:
     input_feature_map: SM_BATCH_SIZE * SM_CLASS_SIZE

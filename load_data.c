@@ -40,7 +40,7 @@ void copy_int(int* copy_from, int* copy_to, int length) {
 
 void print_float(float* input, int length) {
   for (int i = 0; i < length; i ++) {
-    printf("%f\n", input[i]);
+    printf("%.10f\n", input[i]);
   }
 }
 

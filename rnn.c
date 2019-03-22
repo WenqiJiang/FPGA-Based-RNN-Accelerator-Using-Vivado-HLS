@@ -1,4 +1,5 @@
 #include "constants.h"
+#include <stdio.h>
 
 void rnn(float* last_state, 
          float* input_state, 
@@ -54,10 +55,11 @@ void rnn(float* last_state,
                 /* last_state[batch_index][last_state_index] */
                 int current_last_state_index = batch_index * RNN_STATE_SIZE + last_state_index;
 
-                /* recurrent_kernel[output_state_index][last_state_index] */
-                int current_recurrent_kernel_index = output_state_index * RNN_STATE_SIZE + last_state_index;
+                /* recurrent_kernel[last_state_index][output_state_index] */
+                int current_recurrent_kernel_index = last_state_index * RNN_STATE_SIZE + output_state_index;
 
                 /* do multiplication, add to previous value */
+                // printf("%f", last_state[current_last_state_index]);
                 output_state[current_output_state_index] += last_state[current_last_state_index] *
                                                             recurrent_kernel[current_recurrent_kernel_index];
             }
@@ -74,13 +76,13 @@ void rnn(float* last_state,
                 /* input_state[batch_index][input_state_index] */
                 int current_input_state_index = batch_index * RNN_INPUT_SIZE + input_state_index;
 
-                /* kernel[output_state_index][input_state_index] */
-                int current_kernel_index = output_state_index * RNN_INPUT_SIZE + 
-                                            input_state_index;
+                /* kernel[input_state_index][output_state_index] */
+                int current_kernel_index = input_state_index * RNN_STATE_SIZE + 
+                                            output_state_index;
 
                 /* do multiplication, add to previous value */
                 output_state[current_output_state_index] += input_state[current_input_state_index] *
-                                                            kernel[current_kernel_index];						
+                                                            kernel[current_kernel_index];
             }
 
             /* add bias */
