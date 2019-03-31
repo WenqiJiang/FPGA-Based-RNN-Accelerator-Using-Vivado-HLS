@@ -958,4 +958,7 @@ Sample 956:	 C_result: 88	 Keras_result: 345	 Actual_result: 367	 P(88): 0.06877
 Sample 957:	 result: 3
 Sample 958:	 result: 9
 Sample 959:	 result: 719
+Correctness:
+	Keras:0.281250
+	C:0.268750
 Press any key then ENTER to end the program

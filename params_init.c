@@ -13,7 +13,14 @@ void linear_init(float* input, int length, float lower_bound, float upper_bound)
 	}
 }
 
-void zero_init(float* input, int length)
+void float_zero_init(float* input, int length)
+{
+	for(int idx = 0; idx < length; idx++)
+		input[idx] = 0;
+}
+
+
+void double_zero_init(double* input, int length)
 {
 	for(int idx = 0; idx < length; idx++)
 		input[idx] = 0;

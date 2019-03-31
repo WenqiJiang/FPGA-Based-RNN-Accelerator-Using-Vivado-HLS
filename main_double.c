@@ -13,35 +13,35 @@ int main(int argc, char *argv[])
 {
     /* declare weights */
     /* embedding */
-    float* word_embedding = malloc(sizeof(float) * WORD_NUM * WORD_SIZE);
+    double* word_embedding = malloc(sizeof(double) * WORD_NUM * WORD_SIZE);
 
     /* rnn */
 
-    float* rnn_last_state = malloc(sizeof(float) * RNN_BATCH_SIZE * RNN_STATE_SIZE);
-    float* rnn_input_state = malloc(sizeof(float) * RNN_BATCH_SIZE * RNN_INPUT_SIZE);
-    float* rnn_bias = malloc(sizeof(float) * RNN_STATE_SIZE);
-    float* rnn_kernel = malloc(sizeof(float) * RNN_INPUT_SIZE * RNN_STATE_SIZE);
-    float* rnn_recurrent_kernel = malloc(sizeof(float) * RNN_STATE_SIZE * RNN_STATE_SIZE); 
-    float* rnn_output_state = malloc(sizeof(float) * RNN_BATCH_SIZE * RNN_STATE_SIZE);
+    double* rnn_last_state = malloc(sizeof(double) * RNN_BATCH_SIZE * RNN_STATE_SIZE);
+    double* rnn_input_state = malloc(sizeof(double) * RNN_BATCH_SIZE * RNN_INPUT_SIZE);
+    double* rnn_bias = malloc(sizeof(double) * RNN_STATE_SIZE);
+    double* rnn_kernel = malloc(sizeof(double) * RNN_INPUT_SIZE * RNN_STATE_SIZE);
+    double* rnn_recurrent_kernel = malloc(sizeof(double) * RNN_STATE_SIZE * RNN_STATE_SIZE); 
+    double* rnn_output_state = malloc(sizeof(double) * RNN_BATCH_SIZE * RNN_STATE_SIZE);
     
     /* fc */
-    float* fc_input_feature_map = malloc(sizeof(float) * FC_BATCH_SIZE * FC_INPUT_SIZE);
-    float* fc_bias = malloc(sizeof(float) * FC_OUTPUT_SIZE);
-    float* fc_kernel = malloc(sizeof(float) * FC_INPUT_SIZE * FC_OUTPUT_SIZE);
-    float* fc_output_feature_map = malloc(sizeof(float) * FC_BATCH_SIZE * FC_OUTPUT_SIZE);
-    float* softmax_result = malloc(sizeof(float) * SM_BATCH_SIZE * SM_CLASS_SIZE);
+    double* fc_input_feature_map = malloc(sizeof(double) * FC_BATCH_SIZE * FC_INPUT_SIZE);
+    double* fc_bias = malloc(sizeof(double) * FC_OUTPUT_SIZE);
+    double* fc_kernel = malloc(sizeof(double) * FC_INPUT_SIZE * FC_OUTPUT_SIZE);
+    double* fc_output_feature_map = malloc(sizeof(double) * FC_BATCH_SIZE * FC_OUTPUT_SIZE);
+    double* softmax_result = malloc(sizeof(double) * SM_BATCH_SIZE * SM_CLASS_SIZE);
     int* argmax_result = malloc(sizeof(int) * SM_BATCH_SIZE);
 
     /* load model in */
-    load_float("./model/embedding_1_embeddings.txt", WORD_NUM * WORD_SIZE, word_embedding);
-    load_float("./model/simple_rnn_1_bias.txt", RNN_STATE_SIZE, rnn_bias);
-    load_float("./model/simple_rnn_1_kernel.txt", RNN_INPUT_SIZE * RNN_STATE_SIZE, rnn_kernel);
-    load_float("./model/simple_rnn_1_recurrent_kernel.txt", 
+    load_double("./model/embedding_1_embeddings.txt", WORD_NUM * WORD_SIZE, word_embedding);
+    load_double("./model/simple_rnn_1_bias.txt", RNN_STATE_SIZE, rnn_bias);
+    load_double("./model/simple_rnn_1_kernel.txt", RNN_INPUT_SIZE * RNN_STATE_SIZE, rnn_kernel);
+    load_double("./model/simple_rnn_1_recurrent_kernel.txt", 
                 RNN_STATE_SIZE * RNN_STATE_SIZE, rnn_recurrent_kernel);
-    load_float("./model/dense_1_bias.txt", FC_OUTPUT_SIZE, fc_bias);
-    load_float("./model/dense_1_kernel.txt", FC_INPUT_SIZE * FC_OUTPUT_SIZE, fc_kernel);
+    load_double("./model/dense_1_bias.txt", FC_OUTPUT_SIZE, fc_bias);
+    load_double("./model/dense_1_kernel.txt", FC_INPUT_SIZE * FC_OUTPUT_SIZE, fc_kernel);
 
-    // print_float(fc_kernel, FC_INPUT_SIZE * FC_OUTPUT_SIZE);
+    // print_double(fc_kernel, FC_INPUT_SIZE * FC_OUTPUT_SIZE);
     /* load dataset in */
     #define SAMPLE_NUM 1000
     #define SAMPLE_LEN 50
@@ -61,30 +61,30 @@ int main(int argc, char *argv[])
     /* do inference and print the result */
     for (int compute_time = 0; compute_time < SAMPLE_NUM / FC_BATCH_SIZE; compute_time++) {
         /* initialize last state to 0 */
-        float_zero_init(rnn_last_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
+        double_zero_init(rnn_last_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
         for (int i = 0; i < SAMPLE_LEN; i++) {
             for (int j = 0; j < RNN_BATCH_SIZE; j++) {
                 int sample_index = compute_time * SAMPLE_LEN * RNN_BATCH_SIZE + j * SAMPLE_LEN + i;
                 int word_index = sequences[sample_index];
                 int word_embedding_index = word_index * WORD_SIZE;
                 int rnn_input_state_index = j * RNN_INPUT_SIZE;
-                copy_float(&word_embedding[word_embedding_index], 
+                copy_double(&word_embedding[word_embedding_index], 
                         &rnn_input_state[rnn_input_state_index], RNN_INPUT_SIZE);
             }
-            // print_float(rnn_input_state, RNN_INPUT_SIZE * RNN_BATCH_SIZE);
-            float_rnn(rnn_last_state, rnn_input_state, rnn_bias, rnn_kernel, rnn_recurrent_kernel, rnn_output_state);
-            float_act_tanh(rnn_output_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
-            // print_float(rnn_output_state, RNN_STATE_SIZE * RNN_BATCH_SIZE);
-            float* temp = rnn_last_state;
+            // print_double(rnn_input_state, RNN_INPUT_SIZE * RNN_BATCH_SIZE);
+            double_rnn(rnn_last_state, rnn_input_state, rnn_bias, rnn_kernel, rnn_recurrent_kernel, rnn_output_state);
+            double_act_tanh(rnn_output_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
+            // print_double(rnn_output_state, RNN_STATE_SIZE * RNN_BATCH_SIZE);
+            double* temp = rnn_last_state;
             rnn_last_state = rnn_output_state;
             rnn_output_state = temp;
         }
         /* no ReLu after FC layer, only softmax */
-        // print_float(rnn_last_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
-        float_fc(rnn_last_state, fc_bias, fc_kernel, fc_output_feature_map);
-        // print_float(fc_output_feature_map, FC_BATCH_SIZE * FC_OUTPUT_SIZE);
-        float_softmax(fc_output_feature_map, softmax_result);
-        float_argmax(fc_output_feature_map, argmax_result);
+        // print_double(rnn_last_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
+        double_fc(rnn_last_state, fc_bias, fc_kernel, fc_output_feature_map);
+        // print_double(fc_output_feature_map, FC_BATCH_SIZE * FC_OUTPUT_SIZE);
+        double_softmax(fc_output_feature_map, softmax_result);
+        double_argmax(fc_output_feature_map, argmax_result);
         copy_int(argmax_result, &C_result[compute_time * RNN_BATCH_SIZE], RNN_BATCH_SIZE);
 
         #define abs(x) x > 0? x: 0

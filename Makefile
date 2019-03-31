@@ -27,5 +27,5 @@ activation.o: activation.c
 load_data.o: load_data.c
 
 clean:
-	rm *.o main
+	rm *.o main main_float main_double
 
