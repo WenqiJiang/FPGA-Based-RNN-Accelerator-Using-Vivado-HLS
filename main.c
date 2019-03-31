@@ -58,8 +58,10 @@ int main(int argc, char *argv[])
     int* sequences = malloc(sizeof(int) * SAMPLE_LEN * SAMPLE_NUM);
     int* C_result = malloc(sizeof(int) * SAMPLE_NUM);
     int* Keras_result = malloc(sizeof(int) * SAMPLE_NUM);
+    int* Actual_result = malloc(sizeof(int) * SAMPLE_NUM);
     load_int("./datasets/org_seq.txt", SAMPLE_LEN * SAMPLE_NUM, sequences);
     load_int("./datasets/rnn_result.txt", SAMPLE_NUM, Keras_result);
+    load_int("./datasets/actual_result.txt", SAMPLE_NUM, Actual_result);
 
     /* do inference and print the result */
     for (int compute_time = 0; compute_time < SAMPLE_NUM / FC_BATCH_SIZE; compute_time++) {
@@ -89,14 +91,18 @@ int main(int argc, char *argv[])
         argmax(fc_output_feature_map, argmax_result);
         copy_int(argmax_result, &C_result[compute_time * RNN_BATCH_SIZE], RNN_BATCH_SIZE);
         // print_int(argmax_result, SM_BATCH_SIZE);
+
+        #define abs(x) x > 0? x: 0
         for (int i = compute_time * RNN_BATCH_SIZE; i < (compute_time + 1) * RNN_BATCH_SIZE; i++) {
             if (C_result[i] == Keras_result[i])
                 printf("Sample %d:\t result: %d\n", i, C_result[i]);
             else {
-                printf("Sample %d:\t C_result: %d\t Keras_result: %d\t P(%d): %f\t P(%d): %f\n", 
-                i, C_result[i], Keras_result[i], 
+                printf("Sample %d:\t C_result: %d\t Keras_result: %d\t Actual_result: %d\t P(%d): %f\t P(%d): %f\t delta_P: %f\n", 
+                i, C_result[i], Keras_result[i], Actual_result[i],
                 C_result[i], softmax_result[(i - compute_time * RNN_BATCH_SIZE) * SM_CLASS_SIZE + C_result[i]],
-                Keras_result[i], softmax_result[(i - compute_time * RNN_BATCH_SIZE) * SM_CLASS_SIZE + Keras_result[i]]);
+                Keras_result[i], softmax_result[(i - compute_time * RNN_BATCH_SIZE) * SM_CLASS_SIZE + Keras_result[i]],
+                abs(softmax_result[(i - compute_time * RNN_BATCH_SIZE) * SM_CLASS_SIZE + C_result[i]] -
+                softmax_result[(i - compute_time * RNN_BATCH_SIZE) * SM_CLASS_SIZE + Keras_result[i]]));
             }           
         }
     }
