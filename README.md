@@ -48,6 +48,8 @@ load_data.c: load weights and datasets from txt files to C
 params_init.c: initialize weights to zeros (usually used with malloc) 
 
 ## Accuracy Analysis against Keras 
+The accuracy of C implemetation results is slightly worse than Keras. We proposed several reasons and tried to fix them. However, after excluded several possible reasons, there are still something that we can not implemented in C, which may be the cause of accuracy drop.
+
 ### Tanh in C is not accurate 
 
 	c standard lib manual: use our tanh instead of build yours 
