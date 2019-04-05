@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
     load_float("../model/dense_1_bias.txt", FC_OUTPUT_SIZE, fc_bias);
     load_float("../model/dense_1_kernel.txt", FC_INPUT_SIZE * FC_OUTPUT_SIZE, fc_kernel);
 
-    // for(int i = 0; i < 1000; i++)
-    //     printf("%.30f\n", rnn_kernel[i]);
+    // for(int i = 0; i < 128; i++)
+    //     printf("%.30f\n", rnn_bias[i]);
     // print_float(fc_kernel, FC_INPUT_SIZE * FC_OUTPUT_SIZE);
     /* load dataset in */
     #define SAMPLE_NUM 1000

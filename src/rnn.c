@@ -87,7 +87,7 @@ void float_rnn(float* last_state,
 
             /* add bias */
             /* bias[output_state_index] */
-            output_state[current_output_state_index] += bias[current_output_state_index];
+            output_state[current_output_state_index] += bias[output_state_index];
         }
 
     }
