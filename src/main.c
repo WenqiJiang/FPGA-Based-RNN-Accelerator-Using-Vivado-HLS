@@ -111,5 +111,22 @@ int main(int argc, char *argv[])
     
     printf("Correctness:\n\tKeras:%f\n\tC:%f\n", (float) count_Keras / count_times, (float) count_C / count_times);
 
+    free(word_embedding);
+    free(rnn_last_state);
+    free(rnn_input_state);
+    free(rnn_bias);
+    free(rnn_kernel);
+    free(rnn_recurrent_kernel);
+    free(rnn_output_state);
+    free(fc_bias);
+    free(fc_kernel);
+    free(fc_output_feature_map);
+    free(softmax_result);
+    free(argmax_result);
+    free(sequences);
+    free(C_result);
+    free(Keras_result);
+    free(Actual_result);
+
     return 0;
 }
