@@ -41,6 +41,8 @@ int main(int argc, char *argv[])
     load_float("./model/dense_1_bias.txt", FC_OUTPUT_SIZE, fc_bias);
     load_float("./model/dense_1_kernel.txt", FC_INPUT_SIZE * FC_OUTPUT_SIZE, fc_kernel);
 
+    // for(int i = 0; i < 1000; i++)
+    //     printf("%.30f\n", rnn_kernel[i]);
     // print_float(fc_kernel, FC_INPUT_SIZE * FC_OUTPUT_SIZE);
     /* load dataset in */
     #define SAMPLE_NUM 1000
@@ -108,9 +110,6 @@ int main(int argc, char *argv[])
     }
     
     printf("Correctness:\n\tKeras:%f\n\tC:%f\n", (float) count_Keras / count_times, (float) count_C / count_times);
-    printf("%s", "Press any key then ENTER to end the program\n");
-    char str2[10];
-    // scanf("%s", str2);
 
     return 0;
 }

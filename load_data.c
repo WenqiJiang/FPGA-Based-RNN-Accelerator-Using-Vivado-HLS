@@ -20,7 +20,7 @@ void load_float(char* fname, int length, float* array)
 
   for(int i = 0; i < length; i++)
   {
-      fscanf(myfile,"%f", &array[i]);
+      fscanf(myfile,"%40f", &array[i]);
   }
 
   fclose(myfile);
@@ -33,7 +33,7 @@ void load_double(char* fname, int length, double* array)
 
   for(int i = 0; i < length; i++)
   {
-      fscanf(myfile,"%lf", &array[i]);
+      fscanf(myfile,"%40lf", &array[i]);
   }
 
   fclose(myfile);

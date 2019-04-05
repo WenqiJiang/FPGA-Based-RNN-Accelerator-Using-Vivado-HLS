@@ -1,15 +1,27 @@
-# first, we need to compute how large are our weights
-# embedding layer: 16192 x 100 = 1,619,200
-# recurrent layer: 128 * 128 / 128 * 100 / 128, all of them are very small
-# dense layer: 128 * 16192 = 2,072,576
-# in case the width can overflow, we will use the max int: 2 ^ 31 - 1 = 2,147,483,647
-# or smaller is enough: 100,000,000 = 100000000
+# embedding layer
+python h5_to_txt.py --iname="./embedding_1_embeddings.h5" \
+				--dataset="/embedding_1/embeddings:0" \
+				--dim_num=2 --length1=16192 --length2=100 \
+				> embedding_1_embeddings.txt
+				# h5dump -d "/embedding_1/embeddings:0" embedding_1_embeddings.h5
 
-h5dump -o embedding_1_embeddings.txt -y -w 100000000 embedding_1_embeddings.h5
+# RNN layer
+python h5_to_txt.py --iname="./simple_rnn_1_bias.h5" --dataset="/simple_rnn_1/bias:0" --dim_num=1 --length1=128 > simple_rnn_1_bias.txt
+				# h5dump -d "/simple_rnn_1/bias:0" simple_rnn_1_bias.h5
+python h5_to_txt.py --iname="./simple_rnn_1_kernel.h5" --dataset="/simple_rnn_1/kernel:0" --dim_num=2 --length1=100 --length2=128 > simple_rnn_1_kernel.txt
+				# h5dump -d "/simple_rnn_1/kernel:0" simple_rnn_1_kernel.h5
+python h5_to_txt.py --iname="./simple_rnn_1_recurrent_kernel.h5" --dataset="/simple_rnn_1/recurrent_kernel:0" --dim_num=2 --length1=128 --length2=128 > simple_rnn_1_recurrent_kernel.txt
+				# h5dump -d "/simple_rnn_1/recurrent_kernel:0" simple_rnn_1_recurrent_kernel.h5
 
-h5dump -o simple_rnn_1_bias.txt -y -w 100000000 simple_rnn_1_bias.h5
-h5dump -o simple_rnn_1_kernel.txt -y -w 100000000 simple_rnn_1_kernel.h5
-h5dump -o simple_rnn_1_recurrent_kernel.txt -y -w 100000000 simple_rnn_1_recurrent_kernel.h5
+# dense layer
 
-h5dump -o dense_1_bias.txt -y -w 100000000 dense_1_bias.h5
-h5dump -o dense_1_kernel.txt -y -w 100000000 dense_1_kernel.h5
+python h5_to_txt.py --iname="./dense_1_bias.h5" \
+				--dataset="/dense_1/bias:0" \
+				--dim_num=1 --length1=16192 > dense_1_bias.txt
+				# h5dump -d "/dense_1/bias:0" dense_1_bias.h5
+
+python h5_to_txt.py --iname="./dense_1_kernel.h5" \
+				--dataset="/dense_1/kernel:0" \
+				--dim_num=2 --length1=128 --length2=16192 \
+					> dense_1_kernel.txt
+				# h5dump -d "/dense_1/kernel:0" dense_1_kernel.h5

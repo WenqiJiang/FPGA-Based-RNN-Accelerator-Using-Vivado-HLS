@@ -32,7 +32,9 @@ To split the H5 file into individual components (split it into weights matrix an
 	We can see these weights by typing, for example, "h5dump -d "/embedding_1/embeddings:0"  embedding_1_embeddings.h5". These commands are in the comments of "split_h5.sh".
 
 (4) Convert H5 to txt
-	run "./h5_to_txt.sh", below is an example command
+	run "./h5_to_txt.sh", 
+
+	There are two ways to convert h5 datasets to txt files. The first one is to use h5dump. Below is an example command. The complete commands are in "h5_to_txt_outdated.sh".
 
 	h5dump -o dense_1_bias.txt -y -w 1000000000 dense_1_bias.h5
 
@@ -40,6 +42,14 @@ To split the H5 file into individual components (split it into weights matrix an
 	-y,   --noindex      Do not print array indices with the data
 	-w N, --width=N      Set the number of columns of output. A value of 0 (zero)
 
+	However, this method will not output a very precise result, it will only keep part of the decimal fraction. Thus, we'd better use python to output accurate weights, e.g. run
+	
+	python weights_to_txt.py --iname="./embedding_1_embeddings.h5" \
+				--dataset="/embedding_1/embeddings:0" \
+				--length=1619200 > embedding_1_embeddings.txt
+
+	The complete commands are in "h5_to_txt.sh".
+	
 (5) Remove commas
 	Now, if you see these output txt files, you will find that the floats are splitted by commas, which is not friendly to our C program. For example, 
 
