@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     float* rnn_output_state = malloc(sizeof(float) * RNN_BATCH_SIZE * RNN_STATE_SIZE);
     
     /* fc */
-    float* fc_input_feature_map = malloc(sizeof(float) * FC_BATCH_SIZE * FC_INPUT_SIZE);
+    //float* fc_input_feature_map = malloc(sizeof(float) * FC_BATCH_SIZE * FC_INPUT_SIZE);
     float* fc_bias = malloc(sizeof(float) * FC_OUTPUT_SIZE);
     float* fc_kernel = malloc(sizeof(float) * FC_INPUT_SIZE * FC_OUTPUT_SIZE);
     float* fc_output_feature_map = malloc(sizeof(float) * FC_BATCH_SIZE * FC_OUTPUT_SIZE);
@@ -33,13 +33,13 @@ int main(int argc, char *argv[])
     int* argmax_result = malloc(sizeof(int) * SM_BATCH_SIZE);
 
     /* load model in */
-    load_float("./model/embedding_1_embeddings.txt", WORD_NUM * WORD_SIZE, word_embedding);
-    load_float("./model/simple_rnn_1_bias.txt", RNN_STATE_SIZE, rnn_bias);
-    load_float("./model/simple_rnn_1_kernel.txt", RNN_INPUT_SIZE * RNN_STATE_SIZE, rnn_kernel);
-    load_float("./model/simple_rnn_1_recurrent_kernel.txt", 
+    load_float("../model/embedding_1_embeddings.txt", WORD_NUM * WORD_SIZE, word_embedding);
+    load_float("../model/simple_rnn_1_bias.txt", RNN_STATE_SIZE, rnn_bias);
+    load_float("../model/simple_rnn_1_kernel.txt", RNN_INPUT_SIZE * RNN_STATE_SIZE, rnn_kernel);
+    load_float("../model/simple_rnn_1_recurrent_kernel.txt", 
                 RNN_STATE_SIZE * RNN_STATE_SIZE, rnn_recurrent_kernel);
-    load_float("./model/dense_1_bias.txt", FC_OUTPUT_SIZE, fc_bias);
-    load_float("./model/dense_1_kernel.txt", FC_INPUT_SIZE * FC_OUTPUT_SIZE, fc_kernel);
+    load_float("../model/dense_1_bias.txt", FC_OUTPUT_SIZE, fc_bias);
+    load_float("../model/dense_1_kernel.txt", FC_INPUT_SIZE * FC_OUTPUT_SIZE, fc_kernel);
 
     // for(int i = 0; i < 1000; i++)
     //     printf("%.30f\n", rnn_kernel[i]);
@@ -51,9 +51,9 @@ int main(int argc, char *argv[])
     int* C_result = malloc(sizeof(int) * SAMPLE_NUM);
     int* Keras_result = malloc(sizeof(int) * SAMPLE_NUM);
     int* Actual_result = malloc(sizeof(int) * SAMPLE_NUM);
-    load_int("./datasets/org_seq.txt", SAMPLE_LEN * SAMPLE_NUM, sequences);
-    load_int("./datasets/rnn_result.txt", SAMPLE_NUM, Keras_result);
-    load_int("./datasets/actual_result.txt", SAMPLE_NUM, Actual_result);
+    load_int("../datasets/org_seq.txt", SAMPLE_LEN * SAMPLE_NUM, sequences);
+    load_int("../datasets/rnn_result.txt", SAMPLE_NUM, Keras_result);
+    load_int("../datasets/actual_result.txt", SAMPLE_NUM, Actual_result);
 
     /* record result (correctness) */
     int count_Keras = 0;    /* correct rate of Keras */
