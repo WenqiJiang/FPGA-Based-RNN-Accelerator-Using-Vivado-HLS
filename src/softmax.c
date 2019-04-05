@@ -122,6 +122,7 @@ int float_argmax(float* input, int* result) {
         }
         result[batch_index] = max_index;
     }
+    return 0;
 }
 
 int double_argmax(double* input, int* result) {
@@ -142,4 +143,5 @@ int double_argmax(double* input, int* result) {
         }
         result[batch_index] = max_index;
     }
+    return 0;
 }

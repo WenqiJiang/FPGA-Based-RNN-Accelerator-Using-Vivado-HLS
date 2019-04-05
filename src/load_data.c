@@ -7,7 +7,8 @@ void load_int(char* fname, int length, int* array)
 
   for(int i = 0; i < length; i++)
   {
-      fscanf(myfile,"%d", &array[i]);
+      int r = fscanf(myfile,"%d", &array[i]);
+      (void)r; // suppress warning unused variable
   }
 
   fclose(myfile);
@@ -20,7 +21,8 @@ void load_float(char* fname, int length, float* array)
 
   for(int i = 0; i < length; i++)
   {
-      fscanf(myfile,"%40f", &array[i]);
+      int r = fscanf(myfile,"%40f", &array[i]);
+      (void)r; // suppress warning unused variable
   }
 
   fclose(myfile);
@@ -33,7 +35,8 @@ void load_double(char* fname, int length, double* array)
 
   for(int i = 0; i < length; i++)
   {
-      fscanf(myfile,"%40lf", &array[i]);
+      int r = fscanf(myfile,"%40lf", &array[i]);
+      (void) r; // suppress warning unused variable
   }
 
   fclose(myfile);
