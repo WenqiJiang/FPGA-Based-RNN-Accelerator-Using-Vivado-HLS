@@ -1,0 +1,22 @@
+PYTHON_ENV_DIR=$HOME/python_envs
+
+PYTHON_ENV_NAME=c-rnn-env
+
+if [ -z "$PYTHON_ENV_DIR" ]; then
+    echo "ERROR: Please define the virtual environment directory (PYTHON_ENV_DIR)"
+    unset PYTHON_ENV_DIR
+    unset PYTHON_ENV_NAME
+    return 1
+fi
+
+if [ -z "$PYTHON_ENV_NAME" ]; then
+    echo "ERROR: Please define the virtual environment name (PYTHON_ENV_NAME)"
+    unset PYTHON_ENV_DIR
+    unset PYTHON_ENV_NAME
+    return 1
+fi
+
+source $PYTHON_ENV_DIR/$PYTHON_ENV_NAME/bin/activate
+
+unset PYTHON_ENV_DIR
+unset PYTHON_ENV_NAME
