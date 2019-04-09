@@ -123,8 +123,12 @@ endif
 	$(QUIET_RUN)dot gprof.dot -Tsvg -o gprof.svg
 .PHONY: gprof
 
-view-gprof: gprof
+view-gprof:
+ifeq (,$(wildcard ./gprof.svg))
+	$(QUIET_INFO)echo "You should \"make gprof\" first."
+else
 	eog gprof.svg
+endif
 .PHONY: view-gprof
 
 clean:

@@ -1,4 +1,7 @@
 *.o
 *.log
 *.out
+*.sum
+*.dot
+*.svg
 c-rnn
