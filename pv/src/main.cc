@@ -54,9 +54,10 @@ int main(int argc, char *argv[]) {
     IDATA_T* C_result = (IDATA_T*) malloc(sizeof(IDATA_T) * SAMPLE_NUM);
     IDATA_T* Keras_result = (IDATA_T*) malloc(sizeof(IDATA_T) * SAMPLE_NUM);
     IDATA_T* Actual_result = (IDATA_T*) malloc(sizeof(IDATA_T) * SAMPLE_NUM);
-    load_data<IDATA_T, LDATA_T>("../../datasets/org_seq.txt", sequences, SAMPLE_LEN * SAMPLE_NUM);
-    load_data<IDATA_T, LDATA_T>("../../datasets/rnn_result.txt", Keras_result, SAMPLE_NUM);
-    load_data<IDATA_T, LDATA_T>("../../datasets/actual_result.txt", Actual_result, SAMPLE_NUM);
+
+    load_data<IDATA_T, LDATA_T>(ORG_SEQ_FILE, sequences, SAMPLE_LEN * SAMPLE_NUM);
+    load_data<IDATA_T, LDATA_T>(RNN_RESULT_FILE, Keras_result, SAMPLE_NUM);
+    load_data<IDATA_T, LDATA_T>(ACTUAL_RESULT_FILE, Actual_result, SAMPLE_NUM);
 
     // record result (correctness)
     LDATA_T count_Keras = 0;    // correct rate of Keras

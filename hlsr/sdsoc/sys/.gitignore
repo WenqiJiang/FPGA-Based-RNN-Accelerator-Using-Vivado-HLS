@@ -2,3 +2,5 @@ _sds
 *.elf
 *.bit
 sd_card
+.Xil
+*.o

@@ -27,22 +27,22 @@ SD_CARD_DIR := ./sd_card
 EXECUTABLE := c-rnn.elf
 
 VPATH :=
-VPATH += ./src
+VPATH += ../src
 
-TOP_HW_FUNCTION := "fc<>"
-TOP_HW_FUNCTION_SOURCES := src/fc.cc
+TOP_HW_FUNCTION := wrapper_fc
+TOP_HW_FUNCTION_SOURCES := fc.cc
 
 INCDIR :=
-INCDIR += -I./src
+INCDIR += -I../src
 
 CXX_HOST_SOURCES :=
-CXX_HOST_SOURCES += src/fc.cc
-CXX_HOST_SOURCES += src/rnn.cc
-CXX_HOST_SOURCES += src/init.cc
-CXX_HOST_SOURCES += src/main.cc
-CXX_HOST_SOURCES += src/utils.cc
-CXX_HOST_SOURCES += src/softmax.cc
-CXX_HOST_SOURCES += src/activation.cc
+CXX_HOST_SOURCES += fc.cc
+CXX_HOST_SOURCES += rnn.cc
+CXX_HOST_SOURCES += init.cc
+CXX_HOST_SOURCES += main.cc
+CXX_HOST_SOURCES += utils.cc
+CXX_HOST_SOURCES += softmax.cc
+CXX_HOST_SOURCES += activation.cc
 
 SDS_FLAGS :=
 SDS_FLAGS += -sds-pf $(TARGET_BOARD)
@@ -59,7 +59,7 @@ LD_FLAGS :=
 LD_FLAGS += -lm
 LD_FLAGS += -sdcard $(SD_CARD_DIR)
 
-CXX_OBJECTS := $(CXX_HOST_SOURCES:.c=.o)
+CXX_OBJECTS := $(CXX_HOST_SOURCES:.cc=.o)
 
 #PLATFORM_OBJECTS := $(PLATFORM_SOURCES:.c=.o)
 
@@ -67,18 +67,18 @@ all: $(SD_CARD_DIR) $(EXECUTABLE)
 .PHONY: all
 
 $(SD_CARD_DIR):
-	mkdir -p sd_card
+	$(QUIET_MKDIR)mkdir -p $@
 
 $(EXECUTABLE): $(CXX_OBJECTS)
-	$(CXX) $(CXX_OBJECTS) $(LD_FLAGS) -o $@
+	$(QUIET_CXX)$(CXX) $(CXX_OBJECTS) $(LD_FLAGS) -o $@
 
-%.o: %.c
-	$(CXX) -c $(CXX_FLAGS) $(INCDIR) $< -o $@
+%.o: %.cc
+	$(QUIET_CXX)$(CXX) -c $(CXX_FLAGS) $(INCDIR) $< -o $@
 
-#clean:
-#	$(RM) $(EXECUTABLE) $(CXX_OBJECTS) *.bit
+clean:
+	$(QUIET_CLEAN)$(RM) $(EXECUTABLE) $(CXX_OBJECTS) *.bit *.elf
 
-#ultraclean: clean
-#	$(RM) -rf _sds sd_card
+ultraclean: clean
+	$(QUIET_CLEAN)$(RM) -rf _sds $(SD_CARD_DIR) .Xil
 
 

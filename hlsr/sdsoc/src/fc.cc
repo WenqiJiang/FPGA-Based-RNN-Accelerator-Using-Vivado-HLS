@@ -2,11 +2,6 @@
 #include "types.h"
 #include "constants.h"
 
-#pragma SDS data zero_copy(input_feature_map[0:(FC_BATCH_SIZE*FC_INPUT_SIZE)])
-#pragma SDS data zero_copy(bias[0:FC_OUTPUT_SIZE])
-#pragma SDS data zero_copy(kernel[0:(FC_INPUT_SIZE*FC_OUTPUT_SIZE)])
-#pragma SDS data zero_copy(output_feature_map[0:(FC_BATCH_SIZE*FC_OUTPUT_SIZE)])
-
 template<>
 void fc(FDATA_T* input_feature_map, FDATA_T* bias, FDATA_T* kernel, FDATA_T* output_feature_map) {
 
@@ -67,3 +62,13 @@ void fc(FDATA_T* input_feature_map, FDATA_T* bias, FDATA_T* kernel, FDATA_T* out
     }
 
 }
+
+//#pragma SDS data zero_copy(input_feature_map[0:(FC_BATCH_SIZE*FC_INPUT_SIZE)])
+#pragma SDS data zero_copy(input_feature_map[0:64*128])
+#pragma SDS data zero_copy(bias[0:FC_OUTPUT_SIZE])
+#pragma SDS data zero_copy(kernel[0:(FC_INPUT_SIZE*FC_OUTPUT_SIZE)])
+#pragma SDS data zero_copy(output_feature_map[0:(FC_BATCH_SIZE*FC_OUTPUT_SIZE)])
+void wrapper_fc(FDATA_T* input_feature_map, FDATA_T* bias, FDATA_T* kernel, FDATA_T* output_feature_map) {
+    fc<FDATA_T>(input_feature_map, bias, kernel, output_feature_map);
+}
+

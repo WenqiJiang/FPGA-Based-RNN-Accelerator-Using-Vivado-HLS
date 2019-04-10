@@ -16,26 +16,35 @@
 
 #define abs(x) x > 0? x: 0
 
+#ifdef __SDSCC__
+#include "sds_lib.h"
+#define MALLOC sds_alloc
+#define MFREE sds_free
+#else
+#define MALLOC malloc
+#define MFREE free
+#endif
+
 int main(int argc, char *argv[]) {
     // declare weights
     // embedding
-    FDATA_T* word_embedding = (FDATA_T*) malloc(sizeof(FDATA_T) * WORD_NUM * WORD_SIZE);
+    FDATA_T* word_embedding = (FDATA_T*) MALLOC(sizeof(FDATA_T) * WORD_NUM * WORD_SIZE);
 
     // RNN
-    FDATA_T* rnn_last_state = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_BATCH_SIZE * RNN_STATE_SIZE);
-    FDATA_T* rnn_input_state = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_BATCH_SIZE * RNN_INPUT_SIZE);
-    FDATA_T* rnn_bias = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_STATE_SIZE);
-    FDATA_T* rnn_kernel = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_INPUT_SIZE * RNN_STATE_SIZE);
-    FDATA_T* rnn_recurrent_kernel = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_STATE_SIZE * RNN_STATE_SIZE);
-    FDATA_T* rnn_output_state = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_BATCH_SIZE * RNN_STATE_SIZE);
+    FDATA_T* rnn_last_state = (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_BATCH_SIZE * RNN_STATE_SIZE);
+    FDATA_T* rnn_input_state = (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_BATCH_SIZE * RNN_INPUT_SIZE);
+    FDATA_T* rnn_bias = (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_STATE_SIZE);
+    FDATA_T* rnn_kernel = (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_INPUT_SIZE * RNN_STATE_SIZE);
+    FDATA_T* rnn_recurrent_kernel = (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_STATE_SIZE * RNN_STATE_SIZE);
+    FDATA_T* rnn_output_state = (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_BATCH_SIZE * RNN_STATE_SIZE);
 
     // FC
-    //FDATA_T* fc_input_feature_map = malloc(sizeof(FDATA_T) * FC_BATCH_SIZE * FC_INPUT_SIZE);
-    FDATA_T* fc_bias = (FDATA_T*) malloc(sizeof(FDATA_T) * FC_OUTPUT_SIZE);
-    FDATA_T* fc_kernel = (FDATA_T*) malloc(sizeof(FDATA_T) * FC_INPUT_SIZE * FC_OUTPUT_SIZE);
-    FDATA_T* fc_output_feature_map = (FDATA_T*) malloc(sizeof(FDATA_T) * FC_BATCH_SIZE * FC_OUTPUT_SIZE);
-    FDATA_T* softmax_result = (FDATA_T*) malloc(sizeof(FDATA_T) * SM_BATCH_SIZE * SM_CLASS_SIZE);
-    IDATA_T* argmax_result = (IDATA_T*) malloc(sizeof(IDATA_T) * SM_BATCH_SIZE);
+    //FDATA_T* fc_input_feature_map = MALLOC(sizeof(FDATA_T) * FC_BATCH_SIZE * FC_INPUT_SIZE);
+    FDATA_T* fc_bias = (FDATA_T*) MALLOC(sizeof(FDATA_T) * FC_OUTPUT_SIZE);
+    FDATA_T* fc_kernel = (FDATA_T*) MALLOC(sizeof(FDATA_T) * FC_INPUT_SIZE * FC_OUTPUT_SIZE);
+    FDATA_T* fc_output_feature_map = (FDATA_T*) MALLOC(sizeof(FDATA_T) * FC_BATCH_SIZE * FC_OUTPUT_SIZE);
+    FDATA_T* softmax_result = (FDATA_T*) MALLOC(sizeof(FDATA_T) * SM_BATCH_SIZE * SM_CLASS_SIZE);
+    IDATA_T* argmax_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SM_BATCH_SIZE);
 
     // load model in
     load_data<FDATA_T, LDATA_T>(EMBEDDINGS_FILE, word_embedding, WORD_NUM * WORD_SIZE);
@@ -50,13 +59,14 @@ int main(int argc, char *argv[]) {
 #endif
 
     // load dataset in
-    IDATA_T* sequences = (IDATA_T*) malloc(sizeof(IDATA_T) * SAMPLE_LEN * SAMPLE_NUM);
-    IDATA_T* C_result = (IDATA_T*) malloc(sizeof(IDATA_T) * SAMPLE_NUM);
-    IDATA_T* Keras_result = (IDATA_T*) malloc(sizeof(IDATA_T) * SAMPLE_NUM);
-    IDATA_T* Actual_result = (IDATA_T*) malloc(sizeof(IDATA_T) * SAMPLE_NUM);
-    load_data<IDATA_T, LDATA_T>("../../datasets/org_seq.txt", sequences, SAMPLE_LEN * SAMPLE_NUM);
-    load_data<IDATA_T, LDATA_T>("../../datasets/rnn_result.txt", Keras_result, SAMPLE_NUM);
-    load_data<IDATA_T, LDATA_T>("../../datasets/actual_result.txt", Actual_result, SAMPLE_NUM);
+    IDATA_T* sequences = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_LEN * SAMPLE_NUM);
+    IDATA_T* C_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
+    IDATA_T* Keras_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
+    IDATA_T* Actual_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
+
+    load_data<IDATA_T, LDATA_T>(ORG_SEQ_FILE, sequences, SAMPLE_LEN * SAMPLE_NUM);
+    load_data<IDATA_T, LDATA_T>(RNN_RESULT_FILE, Keras_result, SAMPLE_NUM);
+    load_data<IDATA_T, LDATA_T>(ACTUAL_RESULT_FILE, Actual_result, SAMPLE_NUM);
 
     // record result (correctness)
     LDATA_T count_Keras = 0;    // correct rate of Keras
@@ -91,7 +101,7 @@ int main(int argc, char *argv[]) {
 #ifdef DEBUG
         print_data<FDATA_T, LDATA_T>(rnn_last_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
 #endif
-        fc<FDATA_T>(rnn_last_state, fc_bias, fc_kernel, fc_output_feature_map);
+        wrapper_fc(rnn_last_state, fc_bias, fc_kernel, fc_output_feature_map);
 #ifdef DEBUG
         print_data<FDATA_T, LDATA_T>(fc_output_feature_map, FC_BATCH_SIZE * FC_OUTPUT_SIZE);
 #endif
@@ -124,22 +134,22 @@ int main(int argc, char *argv[]) {
     printf("INFO:   Keras: %f\n", (float) count_Keras / count_times);
     printf("INFO:   C:     %f\n", (float) count_C / count_times);
 
-    free(word_embedding);
-    free(rnn_last_state);
-    free(rnn_input_state);
-    free(rnn_bias);
-    free(rnn_kernel);
-    free(rnn_recurrent_kernel);
-    free(rnn_output_state);
-    free(fc_bias);
-    free(fc_kernel);
-    free(fc_output_feature_map);
-    free(softmax_result);
-    free(argmax_result);
-    free(sequences);
-    free(C_result);
-    free(Keras_result);
-    free(Actual_result);
+    MFREE(word_embedding);
+    MFREE(rnn_last_state);
+    MFREE(rnn_input_state);
+    MFREE(rnn_bias);
+    MFREE(rnn_kernel);
+    MFREE(rnn_recurrent_kernel);
+    MFREE(rnn_output_state);
+    MFREE(fc_bias);
+    MFREE(fc_kernel);
+    MFREE(fc_output_feature_map);
+    MFREE(softmax_result);
+    MFREE(argmax_result);
+    MFREE(sequences);
+    MFREE(C_result);
+    MFREE(Keras_result);
+    MFREE(Actual_result);
 
     return 0;
 }
