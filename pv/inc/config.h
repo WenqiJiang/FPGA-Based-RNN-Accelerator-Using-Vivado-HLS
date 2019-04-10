@@ -7,4 +7,3 @@ char const * SIMPLE_RNN_RECURRENT_KERNEL_FILE = "../../model/simple_rnn_1_recurr
 char const * DENSE_BIAS_FILE        = "../../model/dense_1_bias.txt";
 char const * DENSE_KERNEL_FILE      = "../../model/dense_1_kernel.txt";
 
-

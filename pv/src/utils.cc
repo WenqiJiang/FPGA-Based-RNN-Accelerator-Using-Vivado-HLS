@@ -4,30 +4,42 @@
 
 template <>
 void load_data(char const* fname, FDATA_T* array, LDATA_T length) {
-    FILE *myfile;
-    myfile=fopen(fname, "r");
+
+    FILE *data_file;
+    data_file = fopen(fname, "r");
+
+    if (data_file == NULL) {
+        printf("ERROR: cannot open file: %s\n", fname);
+        exit(1);
+    }
 
     for(LDATA_T i = 0; i < length; i++)
     {
-        LDATA_T r = fscanf(myfile,"%40f", &array[i]);
+        LDATA_T r = fscanf(data_file,"%40f", &array[i]);
         (void)r; // suppress warning unused variable
     }
 
-    fclose(myfile);
+    fclose(data_file);
 }
 
 template <>
 void load_data(char const* fname, IDATA_T* array, LDATA_T length) {
-    FILE *myfile;
-    myfile=fopen(fname, "r");
+
+    FILE *data_file;
+    data_file = fopen(fname, "r");
+
+    if (data_file == NULL) {
+        printf("ERROR: cannot open file: %s\n", fname);
+        exit(1);
+    }
 
     for(LDATA_T i = 0; i < length; i++)
     {
-        LDATA_T r = fscanf(myfile,"%d", &array[i]);
+        LDATA_T r = fscanf(data_file,"%d", &array[i]);
         (void)r; // suppress warning unused variable
     }
 
-    fclose(myfile);
+    fclose(data_file);
 }
 
 template <>

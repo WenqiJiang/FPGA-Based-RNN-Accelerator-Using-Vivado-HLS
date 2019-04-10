@@ -70,6 +70,7 @@ CXX_HEADERS += fc.h
 CXX_HEADERS += rnn.h
 CXX_HEADERS += init.h
 CXX_HEADERS += types.h
+CXX_HEADERS += config.h
 CXX_HEADERS += softmax.h
 CXX_HEADERS += constants.h
 CXX_HEADERS += activation.h
