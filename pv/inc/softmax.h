@@ -1,6 +1,8 @@
 #pragma once
 
-void float_softmax (float* input_feature_map, float* output_probability_distribution);
-void double_softmax (double* input_feature_map, double* output_probability_distribution);
-int float_argmax(float* input, int* result);
-int double_argmax(double* input, int* result);
+template <typename DT>
+void softmax (DT* input_feature_map, DT* output_probability_distribution);
+
+template <typename DT1, typename DT2>
+void argmax(DT1* input, DT2* result);
+
