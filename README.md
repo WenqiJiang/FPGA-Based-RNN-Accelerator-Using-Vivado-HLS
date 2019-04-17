@@ -1,5 +1,8 @@
 # C-implementation-of-RNN
 
+## To be done
+git pull rnn and update keras_rnn_lm folder
+
 ## Introduction
 This is the first step to implement RNN language models on FPGAs. All modules are heavily commented. We will use High-Level Synthesis to turn these code into Hardware Description Languages (HDL). 
 
