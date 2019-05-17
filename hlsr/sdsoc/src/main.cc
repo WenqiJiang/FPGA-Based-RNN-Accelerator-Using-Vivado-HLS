@@ -25,9 +25,26 @@
 #define MFREE free
 #endif
 
+class perf_counter
+{
+    public:
+        long unsigned tot, cnt, calls;
+        perf_counter() : tot(0), cnt(0), calls(0) {};
+        inline void reset() { tot = cnt = calls = 0; }
+        inline void start() { cnt = sds_clock_counter(); calls++; };
+        inline void stop() { tot += (sds_clock_counter() - cnt); };
+        inline long unsigned avg_cpu_cycles() { return (tot / calls); };
+};
+
 int main(int argc, char *argv[]) {
+    printf("INFO: C-RNN\n\r");
+
+    perf_counter f_ctr;
+
+    printf("INFO: memory alloc\n\r");
     // declare weights
     // embedding
+    f_ctr.start();
     FDATA_T* word_embedding = (FDATA_T*) MALLOC(sizeof(FDATA_T) * WORD_NUM * WORD_SIZE);
 
     // RNN
@@ -46,6 +63,16 @@ int main(int argc, char *argv[]) {
     FDATA_T* softmax_result = (FDATA_T*) MALLOC(sizeof(FDATA_T) * SM_BATCH_SIZE * SM_CLASS_SIZE);
     IDATA_T* argmax_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SM_BATCH_SIZE);
 
+
+    IDATA_T* sequences = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_LEN * SAMPLE_NUM);
+    IDATA_T* C_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
+    IDATA_T* Keras_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
+    IDATA_T* Actual_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
+    f_ctr.stop();
+    printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
+
+    printf("INFO: model load\n\r");
+
     // load model in
     load_data<FDATA_T, LDATA_T>(EMBEDDINGS_FILE, word_embedding, WORD_NUM * WORD_SIZE);
     load_data<FDATA_T, LDATA_T>(SIMPLE_RNN_BIAS_FILE, rnn_bias, RNN_STATE_SIZE);
@@ -58,12 +85,10 @@ int main(int argc, char *argv[]) {
     print_data<FDATA_T, LDATA_T>(fc_kernel, FC_INPUT_SIZE * FC_OUTPUT_SIZE);
 #endif
 
-    // load dataset in
-    IDATA_T* sequences = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_LEN * SAMPLE_NUM);
-    IDATA_T* C_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
-    IDATA_T* Keras_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
-    IDATA_T* Actual_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
+    printf("INFO: data load\n\r");
+    f_ctr.start();
 
+    // load dataset in
     load_data<IDATA_T, LDATA_T>(ORG_SEQ_FILE, sequences, SAMPLE_LEN * SAMPLE_NUM);
     load_data<IDATA_T, LDATA_T>(RNN_RESULT_FILE, Keras_result, SAMPLE_NUM);
     load_data<IDATA_T, LDATA_T>(ACTUAL_RESULT_FILE, Actual_result, SAMPLE_NUM);
@@ -72,6 +97,11 @@ int main(int argc, char *argv[]) {
     LDATA_T count_Keras = 0;    // correct rate of Keras
     LDATA_T count_C = 0;        // correct rate of C
     LDATA_T count_times = SAMPLE_NUM / FC_BATCH_SIZE * RNN_BATCH_SIZE;
+    f_ctr.stop();
+    printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
+
+    printf("INFO: run inference\n\r");
+    f_ctr.start();
 
     // do inference and print the result
     for (LDATA_T compute_time = 0; compute_time < SAMPLE_NUM / FC_BATCH_SIZE; compute_time++) {
@@ -117,9 +147,9 @@ int main(int argc, char *argv[]) {
 
 #ifdef VERBOSE
             if (C_result[i] == Keras_result[i])
-                printf("INFO: Sample %d:\t result: %d\n", i, C_result[i]);
+                printf("INFO: Sample %d:\t result: %d\n\r", i, C_result[i]);
             else {
-                printf("INFO: Sample %d:\t C_result: %d\t Keras_result: %d\t Actual_result: %d\t P(%d): %f\t P(%d): %lf\t delta_P: %lf\n",
+                printf("INFO: Sample %d:\t C_result: %d\t Keras_result: %d\t Actual_result: %d\t P(%d): %f\t P(%d): %lf\t delta_P: %lf\n\r",
                         i, C_result[i], Keras_result[i], Actual_result[i],
                         C_result[i], softmax_result[(i - compute_time * RNN_BATCH_SIZE) * SM_CLASS_SIZE + C_result[i]],
                         Keras_result[i], softmax_result[(i - compute_time * RNN_BATCH_SIZE) * SM_CLASS_SIZE + Keras_result[i]],
@@ -129,10 +159,12 @@ int main(int argc, char *argv[]) {
 #endif
         }
     }
+    f_ctr.stop();
+    printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
 
-    printf("INFO: Correctness:\n");
-    printf("INFO:   Keras: %f\n", (float) count_Keras / count_times);
-    printf("INFO:   C:     %f\n", (float) count_C / count_times);
+    printf("INFO: Correctness:\n\r");
+    printf("INFO:   Keras: %f\n\r", (float) count_Keras / count_times);
+    printf("INFO:   C:     %f\n\r", (float) count_C / count_times);
 
     MFREE(word_embedding);
     MFREE(rnn_last_state);
