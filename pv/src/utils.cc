@@ -1,6 +1,7 @@
 #include "utils.h"
 
 #include <cstdio>
+#include <stdlib.h>
 
 template <>
 void load_data(char const* fname, FDATA_T* array, LDATA_T length) {
@@ -70,3 +71,20 @@ void print_data(IDATA_T* input, LDATA_T length) {
     }
 }
 
+template <>
+FDATA_T** malloc_2d_array(IDATA_T row, IDATA_T col) {
+    FDATA_T** arr = (FDATA_T**) malloc(row * sizeof(FDATA_T*));
+    for (int i = 0; i < row; i++) {
+        arr[i] = (FDATA_T*) malloc(col * sizeof(FDATA_T));
+    }
+
+    return arr;
+}
+
+template <>
+void free_2d_array(FDATA_T** arr, IDATA_T row, IDATA_T col) {
+    for (int i = 0; i < row; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+}
