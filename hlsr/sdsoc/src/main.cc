@@ -18,13 +18,6 @@
 
 #ifdef __SDSCC__
 #include "sds_lib.h"
-#define MALLOC sds_alloc
-#define MFREE sds_free
-#else
-#define MALLOC malloc
-#define MFREE free
-#endif
-
 class perf_counter
 {
     public:
@@ -35,16 +28,26 @@ class perf_counter
         inline void stop() { tot += (sds_clock_counter() - cnt); };
         inline long unsigned avg_cpu_cycles() { return (tot / calls); };
 };
+#define MALLOC sds_alloc
+#define MFREE sds_free
+#else
+#define MALLOC malloc
+#define MFREE free
+#endif
+
+
 
 int main(int argc, char *argv[]) {
     printf("INFO: C-RNN\n\r");
-
+#ifdef __SDSCC__
     perf_counter f_ctr;
-
+#endif
     printf("INFO: memory alloc\n\r");
     // declare weights
     // embedding
+#ifdef __SDSCC__
     f_ctr.start();
+#endif
     FDATA_T* word_embedding = (FDATA_T*) MALLOC(sizeof(FDATA_T) * WORD_NUM * WORD_SIZE);
 
     // RNN
@@ -68,9 +71,10 @@ int main(int argc, char *argv[]) {
     IDATA_T* C_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
     IDATA_T* Keras_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
     IDATA_T* Actual_result = (IDATA_T*) MALLOC(sizeof(IDATA_T) * SAMPLE_NUM);
+#ifdef __SDSCC__
     f_ctr.stop();
     printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
-
+#endif
     printf("INFO: model load\n\r");
 
     // load model in
@@ -86,8 +90,9 @@ int main(int argc, char *argv[]) {
 #endif
 
     printf("INFO: data load\n\r");
+#ifdef __SDSCC__
     f_ctr.start();
-
+#endif
     // load dataset in
     load_data<IDATA_T, LDATA_T>(ORG_SEQ_FILE, sequences, SAMPLE_LEN * SAMPLE_NUM);
     load_data<IDATA_T, LDATA_T>(RNN_RESULT_FILE, Keras_result, SAMPLE_NUM);
@@ -97,12 +102,14 @@ int main(int argc, char *argv[]) {
     LDATA_T count_Keras = 0;    // correct rate of Keras
     LDATA_T count_C = 0;        // correct rate of C
     LDATA_T count_times = SAMPLE_NUM / FC_BATCH_SIZE * RNN_BATCH_SIZE;
+#ifdef __SDSCC__
     f_ctr.stop();
     printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
-
+#endif
     printf("INFO: run inference\n\r");
+#ifdef __SDSCC__
     f_ctr.start();
-
+#endif
     // do inference and print the result
     for (LDATA_T compute_time = 0; compute_time < SAMPLE_NUM / FC_BATCH_SIZE; compute_time++) {
         // initialize last state to 0
@@ -159,9 +166,10 @@ int main(int argc, char *argv[]) {
 #endif
         }
     }
+#ifdef __SDSCC__
     f_ctr.stop();
     printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
-
+#endif
     printf("INFO: Correctness:\n\r");
     printf("INFO:   Keras: %f\n\r", (float) count_Keras / count_times);
     printf("INFO:   C:     %f\n\r", (float) count_C / count_times);

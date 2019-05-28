@@ -242,11 +242,11 @@ BATCH:
 }
 
 
-#pragma SDS data copy(input_feature_map[0: (FC_BATCH_SIZE * FC_INPUT_SIZE)])
-#pragma SDS data zero_copy(bias[0: FC_OUTPUT_SIZE])
-#pragma SDS data zero_copy(kernel[0: (FC_INPUT_SIZE * FC_OUTPUT_SIZE)])
-#pragma SDS data zero_copy(output_feature_map[0:(FC_BATCH_SIZE*FC_OUTPUT_SIZE)])
-void wrapper_fc(FDATA_T* input_feature_map, FDATA_T* bias, FDATA_T* kernel,
-    FDATA_T* output_feature_map) {
-    fc<FDATA_T>(input_feature_map, bias, kernel, output_feature_map);
-}
+// #pragma SDS data copy(input_feature_map[0: (FC_BATCH_SIZE * FC_INPUT_SIZE)])
+// #pragma SDS data zero_copy(bias[0: FC_OUTPUT_SIZE])
+// #pragma SDS data zero_copy(kernel[0: (FC_INPUT_SIZE * FC_OUTPUT_SIZE)])
+// #pragma SDS data zero_copy(output_feature_map[0:(FC_BATCH_SIZE*FC_OUTPUT_SIZE)])
+// void wrapper_fc(FDATA_T* input_feature_map, FDATA_T* bias, FDATA_T* kernel,
+//     FDATA_T* output_feature_map) {
+//     fc<FDATA_T>(input_feature_map, bias, kernel, output_feature_map);
+// }
