@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
 #ifdef DEBUG
             print_data<FDATA_T, LDATA_T>(rnn_input_state, RNN_INPUT_SIZE * RNN_BATCH_SIZE);
 #endif
-            rnn<FDATA_T>(rnn_last_state, rnn_input_state, rnn_bias, rnn_kernel, rnn_recurrent_kernel, rnn_output_state);
+            wrapper_rnn<FDATA_T>(rnn_last_state, rnn_input_state, rnn_bias, rnn_kernel, rnn_recurrent_kernel, rnn_output_state);
             act_tanh<FDATA_T, LDATA_T>(rnn_output_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
 #ifdef DEBUG
             print_data<FDATA_T, LDATA_T>(rnn_output_state, RNN_STATE_SIZE * RNN_BATCH_SIZE);
@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
 #ifdef DEBUG
         print_data<FDATA_T, LDATA_T>(rnn_last_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
 #endif
-        wrapper_fc(rnn_last_state, fc_bias, fc_kernel, fc_output_feature_map);
+        fc(rnn_last_state, fc_bias, fc_kernel, fc_output_feature_map);
 #ifdef DEBUG
         print_data<FDATA_T, LDATA_T>(fc_output_feature_map, FC_BATCH_SIZE * FC_OUTPUT_SIZE);
 #endif

@@ -93,3 +93,18 @@ void rnn(FDATA_T* last_state, FDATA_T* input_state, FDATA_T* bias, FDATA_T* kern
 
 }
 
+#pragma SDS data zero_copy(last_state[0: (RNN_BATCH_SIZE * RNN_STATE_SIZE)])
+#pragma SDS data zero_copy(input_state[0: (RNN_BATCH_SIZE * RNN_INPUT_SIZE)])
+#pragma SDS data zero_copy(bias[0: RNN_STATE_SIZE])
+#pragma SDS data zero_copy(kernel[0: (RNN_INPUT_SIZE * RNN_STATE_SIZE)])
+#pragma SDS data zero_copy(recurrent_kernel[0: (RNN_STATE_SIZE * RNN_STATE_SIZE)])
+#pragma SDS data zero_copy(output_state[0: (RNN_BATCH_SIZE * RNN_STATE_SIZE)])
+
+
+void wrapper_rnn(FDATA_T* last_state, FDATA_T* input_state, FDATA_T* bias, 
+    FDATA_T* kernel, FDATA_T* recurrent_kernel, FDATA_T* output_state) {
+
+    rnn(last_state, input_state, bias, kernel, recurrent_kernel, output_state);
+}
+
+

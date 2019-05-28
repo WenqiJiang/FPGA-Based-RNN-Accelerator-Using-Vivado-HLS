@@ -29,8 +29,10 @@ EXECUTABLE := c-rnn.elf
 VPATH :=
 VPATH += ../src
 
-TOP_HW_FUNCTION := wrapper_fc
-TOP_HW_FUNCTION_SOURCES := fc.cc
+##########################################
+TOP_HW_FUNCTION := wrapper_rnn
+TOP_HW_FUNCTION_SOURCES := rnn.cc
+##########################################
 
 INCDIR :=
 INCDIR += -I../src
