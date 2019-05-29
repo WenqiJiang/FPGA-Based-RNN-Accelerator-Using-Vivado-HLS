@@ -104,7 +104,7 @@ void rnn(FDATA_T* last_state, FDATA_T* input_state, FDATA_T* bias, FDATA_T* kern
 void wrapper_rnn(FDATA_T* last_state, FDATA_T* input_state, FDATA_T* bias, 
     FDATA_T* kernel, FDATA_T* recurrent_kernel, FDATA_T* output_state) {
 
-    rnn(last_state, input_state, bias, kernel, recurrent_kernel, output_state);
+    rnn<FDATA_T> (last_state, input_state, bias, kernel, recurrent_kernel, output_state);
 }
 
 
