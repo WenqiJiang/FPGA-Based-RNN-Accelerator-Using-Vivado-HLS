@@ -1,3 +1,5 @@
+// This file defines the constants, i.e. the size of the RNN
+
 #pragma once
 
 #define TRUE 1
@@ -10,7 +12,7 @@
 #define WORD_NUM            16192
 #define WORD_SIZE           100
 
-// == RNN layers ===============================================================
+// ============================== RNN layers ===================================
 #define RNN_BATCH_SIZE      64
 #define RNN_STATE_SIZE      128 // state length
 #define RNN_INPUT_SIZE      100 // input of RNN layer, e.g. word vector
@@ -29,7 +31,7 @@
 //                       last_state mul recurrent_kernel +
 //                       bias
 
-// == Fully-Connected layers ===================================================
+// ========================== Fully-Connected layers ===========================
 #define FC_BATCH_SIZE   64
 #define FC_INPUT_SIZE   128   // same as STATE_SIZE
 #define FC_OUTPUT_SIZE  16192 // say, vocabulary number
@@ -45,7 +47,7 @@
 //          output_feature_map = input_feature_map mul kernel +
 //                               bias
 
-// == Softmax layers ===========================================================
+// ============================ Softmax layers =================================
 #define SM_BATCH_SIZE   64
 #define SM_CLASS_SIZE   16192 // how many classes
 

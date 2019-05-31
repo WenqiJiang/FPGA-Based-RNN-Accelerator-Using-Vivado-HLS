@@ -1,3 +1,5 @@
+// This file defines the datatype in this project
+
 #pragma once
 
 #include <cstdlib>

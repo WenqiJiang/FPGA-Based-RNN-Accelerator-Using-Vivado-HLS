@@ -1,3 +1,6 @@
+
+// This file declares functions for array initializations
+
 #pragma once
 
 template <typename DT, typename LT>

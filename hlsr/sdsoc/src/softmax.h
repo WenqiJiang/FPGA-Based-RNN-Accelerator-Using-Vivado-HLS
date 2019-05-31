@@ -1,3 +1,5 @@
+// This file declares the softmax function and the argmax function
+
 #pragma once
 
 template <typename DT>

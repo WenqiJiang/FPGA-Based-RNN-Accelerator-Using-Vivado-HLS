@@ -1,3 +1,6 @@
+// This file declares some auxilliary functions such as loading data from txt 
+// files, copying arrays and printing arrays.
+
 #pragma once
 
 #include "types.h"

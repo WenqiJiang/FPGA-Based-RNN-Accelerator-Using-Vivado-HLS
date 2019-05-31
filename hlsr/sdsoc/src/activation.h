@@ -1,3 +1,5 @@
+// This file declares the activation functions inlcude ReLU amd tanh
+
 #pragma once
 
 template <typename DT, typename DL>
