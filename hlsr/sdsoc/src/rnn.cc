@@ -54,7 +54,7 @@ void load_input_state(FDATA_T input_state[RNN_BATCH_SIZE][RNN_INPUT_SIZE],
 
     for (LDATA_T input_state_index = 0; input_state_index < RNN_INPUT_SIZE;
          input_state_index++) {
-#pragma HLS UNROLL factor=2
+// #pragma HLS UNROLL factor=2
 #pragma HLS PIPELINE
 
       input_state_reg[batch_iter][input_state_index] =
@@ -75,7 +75,7 @@ void load_last_state(FDATA_T last_state[RNN_BATCH_SIZE][RNN_STATE_SIZE],
 
     for (LDATA_T last_state_index = 0; last_state_index < RNN_STATE_SIZE;
          last_state_index++) {
-#pragma HLS UNROLL factor=2
+// #pragma HLS UNROLL factor=2
 #pragma HLS PIPELINE
 
       last_state_reg[batch_iter][last_state_index] =
@@ -94,7 +94,7 @@ void load_kernel(FDATA_T kernel[RNN_INPUT_SIZE][RNN_STATE_SIZE],
 
   for (LDATA_T input_state_index = 0; input_state_index < RNN_INPUT_SIZE;
        input_state_index++) {
-#pragma HLS UNROLL factor=2
+// #pragma HLS UNROLL factor=2
 #pragma HLS PIPELINE
 
     kernel_reg[input_state_index] =
@@ -113,7 +113,7 @@ void load_recurrent_kernel(
 
   for (LDATA_T last_state_index = 0; last_state_index < RNN_STATE_SIZE;
        last_state_index++) {
-#pragma HLS UNROLL factor=2
+// #pragma HLS UNROLL factor=2
 #pragma HLS PIPELINE
 
     recurrent_kernel_reg[last_state_index] =
@@ -140,11 +140,11 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
 // #pragma HLS ARRAY_PARTITION variable=local_reg dim=2
 
   for (LDATA_T batch_iter = 0; batch_iter < TILE_BATCH; batch_iter++) {
-#pragma HLS UNROLL complete
+// #pragma HLS UNROLL complete factor=8
 
     for (LDATA_T input_state_index = 0; input_state_index < RNN_INPUT_SIZE;
          input_state_index++) {
-#pragma HLS UNROLL complete
+// #pragma HLS UNROLL complete factor=8
 
       local_reg[batch_iter][input_state_index] = 
           kernel_reg[input_state_index] *
@@ -153,7 +153,7 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
 
     for (LDATA_T last_state_index = 0; last_state_index < RNN_STATE_SIZE;
          last_state_index++) {
-#pragma HLS UNROLL complete
+// #pragma HLS UNROLL complete factor=8
 
       local_reg[batch_iter][RNN_INPUT_SIZE + last_state_index] =
           recurrent_kernel_reg[last_state_index] *
@@ -164,14 +164,14 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
 
     // prefix sum
     for (LDATA_T i = 0; i < 114; i++) {
-#pragma HLS UNROLL complete
+// #pragma HLS UNROLL complete factor=8
 
       local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                  local_reg[batch_iter][114 + i];
     }
 
     for (LDATA_T i = 0; i < 57; i++) {
-#pragma HLS UNROLL complete
+// #pragma HLS UNROLL complete factor=8
 
       local_reg[batch_iter][i] = local_reg[batch_iter][i] + 
                                  local_reg[batch_iter][57 + i];
@@ -180,7 +180,7 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
     // 57 = 28 * 2 + 1 -> need 29 reg for next iteration
     // the 57'th number will be copy to 29'th reg
     for (LDATA_T i = 0; i < 28; i++) {
-#pragma HLS UNROLL complete
+// #pragma HLS UNROLL complete factor=8
 
       local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                  local_reg[batch_iter][28 + i];
@@ -190,7 +190,7 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
     // 29 = 14 * 2 + 1 -> need 15 reg for next iteration
     // the 29'th number will be copy to 15'th reg
     for (LDATA_T i = 0; i < 14; i++) {
-#pragma HLS UNROLL complete
+// #pragma HLS UNROLL complete factor=8
 
       local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                  local_reg[batch_iter][14 + i];
@@ -200,7 +200,7 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
     // 15 = 7 * 2 + 1 -> need 8 reg for next iteration
     // the 15'th number will be copy to 8'th reg
     for (LDATA_T i = 0; i < 7; i++) {
-#pragma HLS UNROLL complete
+// #pragma HLS UNROLL complete factor=8
 
       local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                  local_reg[batch_iter][7 + i];
@@ -209,7 +209,7 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
 
     // from 8, regular prefix sum
     for (LDATA_T i = 0; i < 4; i++) {
-#pragma HLS UNROLL complete
+// #pragma HLS UNROLL complete factor=4
 
       local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                  local_reg[batch_iter][4 + i];
@@ -217,7 +217,7 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
 
     // from 8, regular prefix sum
     for (LDATA_T i = 0; i < 2; i++) {
-#pragma HLS UNROLL complete
+// #pragma HLS UNROLL complete factor=2
 
       local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                  local_reg[batch_iter][2 + i];
@@ -225,7 +225,7 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
 
     // from 8, regular prefix sum
     for (LDATA_T i = 0; i < 1; i++) {
-#pragma HLS UNROLL complete
+// #pragma HLS UNROLL complete factor=1
 
       local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                  local_reg[batch_iter][1 + i];
@@ -282,7 +282,7 @@ void save_output_state(FDATA_T output_state_reg[TILE_BATCH][RNN_STATE_SIZE],
 
     for (LDATA_T output_state_index = 0;
          output_state_index < RNN_STATE_SIZE; output_state_index++) {
-#pragma HLS UNROLL factor=2
+// #pragma HLS UNROLL factor=2
 #pragma HLS PIPELINE
 
       output_state[start_batch_index + batch_iter][output_state_index] =
@@ -347,12 +347,13 @@ BATCH:
 #pragma SDS data zero_copy(output_state[0: (RNN_BATCH_SIZE * RNN_STATE_SIZE)])
 
 
-void wrapper_rnn(FDATA_T last_state[RNN_BATCH_SIZE][RNN_STATE_SIZE],
-                 FDATA_T input_state[RNN_BATCH_SIZE][RNN_INPUT_SIZE],
-                 FDATA_T bias[RNN_STATE_SIZE],
-                 FDATA_T kernel[RNN_INPUT_SIZE][RNN_STATE_SIZE],
-                 FDATA_T recurrent_kernel[RNN_STATE_SIZE][RNN_STATE_SIZE],
-                 FDATA_T output_state[RNN_BATCH_SIZE][RNN_STATE_SIZE]) {
+
+void wrapper_rnn(FDATA_T* last_state,
+         FDATA_T* input_state,
+         FDATA_T* bias,
+         FDATA_T* kernel,
+         FDATA_T* recurrent_kernel,
+         FDATA_T* output_state) {
 
   rnn<FDATA_T> (last_state, input_state, bias, kernel, 
                 recurrent_kernel, output_state);
