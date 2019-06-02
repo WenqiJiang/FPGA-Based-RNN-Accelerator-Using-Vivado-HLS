@@ -26,13 +26,16 @@ int main(int argc, char *argv[]) {
     FDATA_T* rnn_input_state = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_BATCH_SIZE * RNN_INPUT_SIZE);
     FDATA_T* rnn_bias = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_STATE_SIZE);
     FDATA_T* rnn_kernel = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_INPUT_SIZE * RNN_STATE_SIZE);
+    FDATA_T* rnn_kernel_transpose = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_INPUT_SIZE * RNN_STATE_SIZE);
     FDATA_T* rnn_recurrent_kernel = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_STATE_SIZE * RNN_STATE_SIZE);
+    FDATA_T* rnn_recurrent_kernel_transpose = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_STATE_SIZE * RNN_STATE_SIZE);
     FDATA_T* rnn_output_state = (FDATA_T*) malloc(sizeof(FDATA_T) * RNN_BATCH_SIZE * RNN_STATE_SIZE);
 
     // FC
     //FDATA_T* fc_input_feature_map = malloc(sizeof(FDATA_T) * FC_BATCH_SIZE * FC_INPUT_SIZE);
     FDATA_T* fc_bias = (FDATA_T*) malloc(sizeof(FDATA_T) * FC_OUTPUT_SIZE);
     FDATA_T* fc_kernel = (FDATA_T*) malloc(sizeof(FDATA_T) * FC_INPUT_SIZE * FC_OUTPUT_SIZE);
+    FDATA_T* fc_kernel_transpose = (FDATA_T*) malloc(sizeof(FDATA_T) * FC_INPUT_SIZE * FC_OUTPUT_SIZE);
     FDATA_T* fc_output_feature_map = (FDATA_T*) malloc(sizeof(FDATA_T) * FC_BATCH_SIZE * FC_OUTPUT_SIZE);
     FDATA_T* softmax_result = (FDATA_T*) malloc(sizeof(FDATA_T) * SM_BATCH_SIZE * SM_CLASS_SIZE);
     IDATA_T* argmax_result = (IDATA_T*) malloc(sizeof(IDATA_T) * SM_BATCH_SIZE);
@@ -44,6 +47,11 @@ int main(int argc, char *argv[]) {
     load_data<FDATA_T, LDATA_T>(SIMPLE_RNN_RECURRENT_KERNEL_FILE, rnn_recurrent_kernel, RNN_STATE_SIZE * RNN_STATE_SIZE);
     load_data<FDATA_T, LDATA_T>(DENSE_BIAS_FILE, fc_bias, FC_OUTPUT_SIZE);
     load_data<FDATA_T, LDATA_T>(DENSE_KERNEL_FILE, fc_kernel, FC_INPUT_SIZE * FC_OUTPUT_SIZE);
+
+    // transpose kernels
+    transpose(rnn_kernel, rnn_kernel_transpose, RNN_INPUT_SIZE, RNN_STATE_SIZE);
+    transpose(rnn_recurrent_kernel, rnn_recurrent_kernel_transpose, RNN_STATE_SIZE, RNN_STATE_SIZE);
+    transpose(fc_kernel, fc_kernel_transpose, FC_INPUT_SIZE, FC_OUTPUT_SIZE);
 
 #ifdef DEBUG
     print_data<FDATA_T, LDATA_T>(fc_kernel, FC_INPUT_SIZE * FC_OUTPUT_SIZE);
@@ -79,7 +87,7 @@ int main(int argc, char *argv[]) {
 #ifdef DEBUG
             print_data<FDATA_T, LDATA_T>(rnn_input_state, RNN_INPUT_SIZE * RNN_BATCH_SIZE);
 #endif
-            rnn<FDATA_T>(rnn_last_state, rnn_input_state, rnn_bias, rnn_kernel, rnn_recurrent_kernel, rnn_output_state);
+            rnn<FDATA_T>(rnn_last_state, rnn_input_state, rnn_bias, rnn_kernel_transpose, rnn_recurrent_kernel_transpose, rnn_output_state);
             act_tanh<FDATA_T, LDATA_T>(rnn_output_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
 #ifdef DEBUG
             print_data<FDATA_T, LDATA_T>(rnn_output_state, RNN_STATE_SIZE * RNN_BATCH_SIZE);
@@ -92,7 +100,7 @@ int main(int argc, char *argv[]) {
 #ifdef DEBUG
         print_data<FDATA_T, LDATA_T>(rnn_last_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
 #endif
-        fc<FDATA_T>(rnn_last_state, fc_bias, fc_kernel, fc_output_feature_map);
+        fc<FDATA_T>(rnn_last_state, fc_bias, fc_kernel_transpose, fc_output_feature_map);
 #ifdef DEBUG
         print_data<FDATA_T, LDATA_T>(fc_output_feature_map, FC_BATCH_SIZE * FC_OUTPUT_SIZE);
 #endif

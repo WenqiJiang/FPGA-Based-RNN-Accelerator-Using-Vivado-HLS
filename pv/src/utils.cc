@@ -88,3 +88,15 @@ void free_2d_array(FDATA_T** arr, IDATA_T row, IDATA_T col) {
     }
     free(arr);
 }
+
+template <>
+void transpose(FDATA_T* src, FDATA_T* dst, const IDATA_T ROW, const IDATA_T COL)
+{
+  // transpose array
+  // the source array has shape of (row, col)
+
+  for (IDATA_T row = 0; row < ROW; row++) {
+    for (IDATA_T col = 0; col < COL; col++) 
+      dst[col * ROW + row] = src[row * COL + col];
+  }
+}  

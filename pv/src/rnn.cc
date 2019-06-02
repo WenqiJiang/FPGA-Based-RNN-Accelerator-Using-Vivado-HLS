@@ -12,8 +12,8 @@ void rnn(FDATA_T* last_state, FDATA_T* input_state, FDATA_T* bias, FDATA_T* kern
     //   input_state: RNN_BATCH_SIZE * RNN_INPUT_SIZE (None * 100)
     //   last_state: RNN_BATCH_SIZE * RNN_STATE_SIZE (None * 128)
     //   bias: RNN_STATE_SIZE (128)
-    //   kernel: RNN_INPUT_SIZE * RNN_STATE_SIZE (100 * 128)
-    //   recurrent_kernel: RNN_STATE_SIZE * RNN_STATE_SIZE (128 * 128)
+    //   kernel: transposed -> RNN_STATE_SIZE * RNN_INPUT_SIZE (128 * 100)
+    //   recurrent_kernel: transposed -> RNN_STATE_SIZE * RNN_STATE_SIZE (128 * 128)
     //   output_state: RNN_BATCH_SIZE * RNN_STATE_SIZE (None, 128)
 
     //  computation:
@@ -54,8 +54,8 @@ void rnn(FDATA_T* last_state, FDATA_T* input_state, FDATA_T* bias, FDATA_T* kern
                 // last_state[batch_index][last_state_index]
                 LDATA_T current_last_state_index = batch_index * RNN_STATE_SIZE + last_state_index;
 
-                // recurrent_kernel[last_state_index][output_state_index]
-                LDATA_T current_recurrent_kernel_index = last_state_index * RNN_STATE_SIZE + output_state_index;
+                // recurrent_kernel[output_state_index][last_state_index]
+                LDATA_T current_recurrent_kernel_index = output_state_index * RNN_STATE_SIZE + last_state_index;
 
                 // do multiplication, add to previous value
                 // pr f("%f", last_state[current_last_state_index]);
@@ -70,14 +70,14 @@ void rnn(FDATA_T* last_state, FDATA_T* input_state, FDATA_T* bias, FDATA_T* kern
 
                 // output_state[batch_index][output_state_index] +=
                 //                input_state[batch_index][input_state_index] *
-                //                kernel[output_state_index][input_state_index + STATE_SIZE]
+                //                kernel[output_state_index][input_state_index]
 
                 // input_state[batch_index][input_state_index]
                 LDATA_T current_input_state_index = batch_index * RNN_INPUT_SIZE + input_state_index;
 
-                // kernel[input_state_index][output_state_index]
-                LDATA_T current_kernel_index = input_state_index * RNN_STATE_SIZE +
-                    output_state_index;
+                // kernel[output_state_index][input_state_index]
+                LDATA_T current_kernel_index = output_state_index * RNN_INPUT_SIZE +
+                    input_state_index;
 
                 // do multiplication, add to previous value
                 output_state[current_output_state_index] += input_state[current_input_state_index] *
