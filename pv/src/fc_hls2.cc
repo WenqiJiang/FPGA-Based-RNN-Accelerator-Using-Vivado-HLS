@@ -12,27 +12,27 @@ void fc(DT input_feature_map[FC_BATCH_SIZE * FC_INPUT_SIZE],
 
 #define TILE_BATCH 32
 
-void load_input_feature_map(
-    FDATA_T input_feature_map_reg[TILE_BATCH][FC_INPUT_SIZE],
+void fc_load_input_feature_map(
+    FDATA_T** input_feature_map_reg,
     FDATA_T input_feature_map_BRAM[FC_BATCH_SIZE * FC_INPUT_SIZE],
     LDATA_T start_batch);
 
-void load_kernel(FDATA_T kernel_BRAM[FC_OUTPUT_SIZE * FC_INPUT_SIZE], 
+void fc_load_kernel(FDATA_T kernel_BRAM[FC_OUTPUT_SIZE * FC_INPUT_SIZE], 
                 FDATA_T kernel_reg[FC_INPUT_SIZE],
                 LDATA_T output_feature_map_index);
 
-void compute(FDATA_T input_feature_map_reg[TILE_BATCH][FC_INPUT_SIZE], 
+void fc_compute(FDATA_T** input_feature_map_reg, 
              FDATA_T kernel_reg[FC_INPUT_SIZE],
-             FDATA_T output_feature_map_reg[TILE_BATCH][FC_OUTPUT_SIZE], 
+             FDATA_T** output_feature_map_reg, 
              LDATA_T output_feature_map_index);
 
-void load_kernel_and_compute(
+void fc_load_kernel_and_compute(
     FDATA_T kernel[FC_OUTPUT_SIZE * FC_INPUT_SIZE], 
-    FDATA_T input_feature_map_reg[TILE_BATCH][FC_INPUT_SIZE],
-    FDATA_T output_feature_map_reg[TILE_BATCH][FC_OUTPUT_SIZE]);
+    FDATA_T** input_feature_map_reg,
+    FDATA_T** output_feature_map_reg);
 
-void save_output_feature_map(
-    FDATA_T output_feature_map_reg[TILE_BATCH][FC_OUTPUT_SIZE],
+void fc_save_output_feature_map(
+    FDATA_T** output_feature_map_reg,
     FDATA_T bias[FC_OUTPUT_SIZE],
     FDATA_T output_feature_map_BRAM[FC_BATCH_SIZE * FC_OUTPUT_SIZE],
     LDATA_T start_batch);
@@ -40,8 +40,8 @@ void save_output_feature_map(
 
 // to take advantage of constant loop bound, write load input FM and load kernel
 // separately
-void load_input_feature_map(
-    FDATA_T input_feature_map_reg[TILE_BATCH][FC_INPUT_SIZE],
+void fc_load_input_feature_map(
+    FDATA_T** input_feature_map_reg,
     FDATA_T input_feature_map_BRAM[FC_BATCH_SIZE * FC_INPUT_SIZE],
     LDATA_T start_batch) {
 
@@ -63,7 +63,7 @@ void load_input_feature_map(
 
 // to take advantage of constant loop bound, write load input FM and load kernel
 // separately
-void load_kernel(FDATA_T kernel_BRAM[FC_OUTPUT_SIZE * FC_INPUT_SIZE], 
+void fc_load_kernel(FDATA_T kernel_BRAM[FC_OUTPUT_SIZE * FC_INPUT_SIZE], 
                 FDATA_T kernel_reg[FC_INPUT_SIZE],
                 LDATA_T output_feature_map_index) {
   // kernel_BRAM: FC_OUTPUT_SIZE * FC_INPUT_SIZE
@@ -82,13 +82,13 @@ void load_kernel(FDATA_T kernel_BRAM[FC_OUTPUT_SIZE * FC_INPUT_SIZE],
   }
 }
 
-void compute(FDATA_T input_feature_map_reg[TILE_BATCH][FC_INPUT_SIZE], 
+void fc_compute(FDATA_T** input_feature_map_reg, 
              FDATA_T kernel_reg[FC_INPUT_SIZE],
-             FDATA_T output_feature_map_reg[TILE_BATCH][FC_OUTPUT_SIZE], 
+             FDATA_T** output_feature_map_reg, 
              LDATA_T output_feature_map_index) {
 
   // initialization
-  FDATA_T* local_reg = malloc(TILE_BATCH * FC_INPUT_SIZE * sizeof(FDATA_T);
+  FDATA_T** local_reg = malloc_2d_array(TILE_BATCH, FC_INPUT_SIZE);
 
   // compute
   for (LDATA_T batch_iter = 0; batch_iter < TILE_BATCH; batch_iter++) {
@@ -154,12 +154,14 @@ void compute(FDATA_T input_feature_map_reg[TILE_BATCH][FC_INPUT_SIZE],
     output_feature_map_reg[batch_iter][output_feature_map_index] = 
       local_reg[batch_iter][0];
   }
+  free_2d_array(local_reg, TILE_BATCH, FC_INPUT_SIZE);
 }
 
-void load_kernel_and_compute(
+
+void fc_load_kernel_and_compute(
     FDATA_T kernel[FC_OUTPUT_SIZE * FC_INPUT_SIZE], 
-    FDATA_T input_feature_map_reg[TILE_BATCH][FC_INPUT_SIZE],
-    FDATA_T output_feature_map_reg[TILE_BATCH][FC_OUTPUT_SIZE]) {
+    FDATA_T** input_feature_map_reg,
+    FDATA_T** output_feature_map_reg) {
   // combine load_kernel and compute
   // finish compute one batch sample, i.e. a probability distribution
 
@@ -174,16 +176,16 @@ void load_kernel_and_compute(
 // #pragma HLS DATAFLOW
 
     // load
-    load_kernel(kernel, kernel_reg, output_feature_map_index);
+    fc_load_kernel(kernel, kernel_reg, output_feature_map_index);
 
     // compute a batch of output
-    compute(input_feature_map_reg, kernel_reg,
+    fc_compute(input_feature_map_reg, kernel_reg,
         output_feature_map_reg, output_feature_map_index);
   }
 }
 
-void save_output_feature_map(
-    FDATA_T output_feature_map_reg[TILE_BATCH][FC_OUTPUT_SIZE],
+void fc_save_output_feature_map(
+    FDATA_T** output_feature_map_reg,
     FDATA_T bias[FC_OUTPUT_SIZE],
     FDATA_T output_feature_map_BRAM[FC_BATCH_SIZE * FC_OUTPUT_SIZE],
     LDATA_T start_batch) {
@@ -232,8 +234,8 @@ void fc(FDATA_T input_feature_map[FC_BATCH_SIZE * FC_INPUT_SIZE],
 
   // declare registers and use array partition
   // tile = 8
-  FDATA_T* input_feature_map_reg = malloc(TILE_BATCH * FC_INPUT_SIZE * sizeof(FDATA_T));
-  FDATA_T* output_feature_map_reg = malloc(TILE_BATCH * FC_OUTPUT_SIZE * sizeof(FDATA_T));
+  FDATA_T** input_feature_map_reg = malloc_2d_array(TILE_BATCH, FC_INPUT_SIZE);
+  FDATA_T** output_feature_map_reg = malloc_2d_array(TILE_BATCH, FC_OUTPUT_SIZE);
 
 // #pragma HLS ARRAY_PARTITION variable=input_feature_map_reg dim=2
 // #pragma HLS ARRAY_PARTITION variable=output_feature_map_reg dim=1
@@ -247,17 +249,20 @@ BATCH:
 // #pragma HLS DATAFLOW
 
     // load
-    load_input_feature_map(input_feature_map_reg, input_feature_map,
+    fc_load_input_feature_map(input_feature_map_reg, input_feature_map,
         batch_iter * TILE_BATCH);
 
     // compute + load
-    load_kernel_and_compute(kernel, input_feature_map_reg,
+    fc_load_kernel_and_compute(kernel, input_feature_map_reg,
         output_feature_map_reg);
 
     // save
-    save_output_feature_map(output_feature_map_reg, bias, output_feature_map,
+    fc_save_output_feature_map(output_feature_map_reg, bias, output_feature_map,
         batch_iter * TILE_BATCH);
   }
+
+  free_2d_array(input_feature_map_reg, TILE_BATCH, FC_INPUT_SIZE);
+  free_2d_array(output_feature_map_reg, TILE_BATCH, FC_OUTPUT_SIZE);
 }
 
 
