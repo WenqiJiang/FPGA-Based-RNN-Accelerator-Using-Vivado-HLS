@@ -78,8 +78,8 @@ VPATH += ../inc
 VPATH += ../src
 
 CXX_SOURCES :=
-CXX_SOURCES += fc.cc
-# CXX_SOURCES += fc_hls2.cc
+#CXX_SOURCES += fc.cc
+CXX_SOURCES += fc_hls2.cc
 #CXX_SOURCES += rnn.cc
 CXX_SOURCES += rnn_hls.cc
 CXX_SOURCES += init.cc
