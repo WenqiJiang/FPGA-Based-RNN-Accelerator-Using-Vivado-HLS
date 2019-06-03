@@ -14,11 +14,18 @@ void load_data(char const* fname, FDATA_T* array, LDATA_T length) {
         exit(1);
     }
 
+    // Read floating point values from file and convert them to FDATA_T.
+    float *flt_array = (float*) malloc(length * sizeof(double));
+
     for(LDATA_T i = 0; i < length; i++)
     {
-        LDATA_T r = fscanf(data_file,"%40f", &array[i]);
+        LDATA_T r = fscanf(data_file,"%40f", &flt_array[i]);
         (void)r; // suppress warning unused variable
+
+        array[i] = FDATA_T(flt_array[i]);
     }
+
+    free(flt_array);
 
     fclose(data_file);
 }
@@ -60,7 +67,7 @@ void copy_data(IDATA_T* copy_from, IDATA_T* copy_to, LDATA_T length) {
 template <>
 void print_data(FDATA_T* input, LDATA_T length) {
     for (LDATA_T i = 0; i < length; i ++) {
-        printf("%.10f\n", input[i]);
+        printf("%.10f\n", TOFLOAT(input[i]));
     }
 }
 

@@ -19,16 +19,37 @@ endif
 
 TARGET = c-rnn
 
-all: release
+all: check-env release
+
+check-env:
+ifndef XILINX_VIVADO
+	$(error XILINX_VIVADO is undefined)
+endif
 
 CC = clang++
 
 INCDIR :=
 INCDIR += -I../inc
+INCDIR += -I$(XILINX_VIVADO)/include
+
+# For Windows machines: provide the path to your Vivado installation
+#INCDIR += -IC:/Xilinx/Vivado/2018.3/include
 
 CXX_FLAGS :=
 CXX_FLAGS += -Wall
-CXX_FLAGS += -pedantic
+
+# Use the following flags to compile "hls_math.h" for fixed-point arithmetic.
+CXX_FLAGS += -Wno-unknown-pragmas # disable HLS pragmas in PV
+CXX_FLAGS += -Wno-unused-label # disable HLS labels in PV
+CXX_FLAGS += -Wno-unused-variable
+#CXX_FLAGS += -pedantic
+
+# Fixed point configuration. Those variables should be specified on the command
+# line, for example:
+# FXD_W_LENGTH=32 FXD_I_LENGTH=16 make
+# If the variables are not specified, there should be a default in 'inc/types.h'.
+CXX_FLAGS += -DFXD_W_LENGTH=$(FXD_W_LENGTH)
+CXX_FLAGS += -DFXD_I_LENGTH=$(FXD_I_LENGTH)
 
 LD_FLAGS :=
 
