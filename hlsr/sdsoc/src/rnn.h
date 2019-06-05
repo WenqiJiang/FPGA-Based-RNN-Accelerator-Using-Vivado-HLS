@@ -2,9 +2,7 @@
 #include "types.h"
 #include "constants.h"
 
-
-#define TILE_BATCH 16
-
+#define TILE_BATCH 32
 
 void wrapper_rnn(FDATA_T* last_state, FDATA_T* input_state, FDATA_T* bias,
                  FDATA_T* kernel, FDATA_T* recurrent_kernel, 

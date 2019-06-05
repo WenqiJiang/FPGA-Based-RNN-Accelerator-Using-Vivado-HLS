@@ -157,5 +157,5 @@ endif
 .PHONY: view-gprof
 
 clean:
-	$(QUIET_CLEAN)rm -rf *.o $(TARGET) *.log *.out *.svg *.pdf *.dot *.sum
+	$(QUIET_CLEAN)rm -rf *.o $(TARGET) *.svg *.pdf *.dot *.sum
 .PHONY: clean
