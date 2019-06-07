@@ -27,10 +27,7 @@ void act_tanh(FDATA_T* input_feature_map, LDATA_T length) {
         // FDATA_T e_minus_x = exp(input_feature_map[i]);
         // input_feature_map[i] = (e_x - e_minus_x) / (e_x + e_minus_x);
 
-        // TODO(gdg): This is a workaround to compile tanh(FIXED_POINT) in PV.
-        // input_feature_map[i] = tanh(input_feature_map[i]);
-        float data = TOFLOAT(input_feature_map[i]);
-        input_feature_map[i] = FDATA_T(tanh(data));
+	input_feature_map[i] = tanh(input_feature_map[i]);
     }
 }
 
