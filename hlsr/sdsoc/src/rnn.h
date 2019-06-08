@@ -2,7 +2,7 @@
 #include "types.h"
 #include "constants.h"
 
-#define TILE_BATCH 32
+#define TILE_BATCH 64
 
 void wrapper_rnn(FDATA_T* last_state, FDATA_T* input_state, FDATA_T* bias,
                  FDATA_T* kernel, FDATA_T* recurrent_kernel, 
@@ -25,9 +25,8 @@ void rnn_load_last_state(FDATA_T last_state_part[TILE_BATCH * RNN_STATE_SIZE],
 void rnn_load_kernel(FDATA_T kernel_part[RNN_INPUT_SIZE],
                      FDATA_T kernel_reg[RNN_INPUT_SIZE]);
 
-void rnn_load_recurrent_kernel(FDATA_T recurrent_kernel[RNN_STATE_SIZE],
-                               FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE],
-                               LDATA_T output_state_index);
+void rnn_load_recurrent_kernel(FDATA_T recurrent_kernel_part[RNN_STATE_SIZE],
+                               FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE]);
 
 void rnn_compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
                  FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE],
@@ -40,7 +39,7 @@ void rnn_load_kernels_and_compute(
     FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE],
     FDATA_T kernel[RNN_STATE_SIZE * RNN_INPUT_SIZE],
     FDATA_T recurrent_kernel[RNN_STATE_SIZE * RNN_STATE_SIZE],
-    FDATA_T output_state_reg[TILE_BATCH][RNN_STATE_SIZE]);
+    FDATA_T output_state_reg[RNN_STATE_SIZE][TILE_BATCH]);
 
 
 void rnn_save_output_state(FDATA_T output_state_reg[RNN_STATE_SIZE][TILE_BATCH],

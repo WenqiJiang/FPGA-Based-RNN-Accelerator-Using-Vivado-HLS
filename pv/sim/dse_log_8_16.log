@@ -1,468 +1,468 @@
 W: 8	I: 0
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.080208
 W: 8	I: 1
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.002083
+INFO:   C:     0.080208
 W: 8	I: 2
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.003125
+INFO:   C:     0.082292
 W: 8	I: 3
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.083333
 W: 8	I: 4
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.007292
+INFO:   C:     0.126042
 W: 8	I: 5
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.007292
+INFO:   C:     0.238542
 W: 8	I: 6
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 8	I: 7
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.003125
 W: 8	I: 8
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.004167
 W: 9	I: 0
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 9	I: 1
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.003125
+INFO:   C:     0.080208
 W: 9	I: 2
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.082292
 W: 9	I: 3
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.083333
 W: 9	I: 4
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.006250
+INFO:   C:     0.129167
 W: 9	I: 5
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.169792
+INFO:   C:     0.285417
 W: 9	I: 6
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.012500
+INFO:   C:     0.238542
 W: 9	I: 7
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 9	I: 8
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.003125
 W: 9	I: 9
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.004167
 W: 10	I: 0
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 10	I: 1
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 10	I: 2
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 10	I: 3
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.083333
 W: 10	I: 4
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.133333
 W: 10	I: 5
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.215625
+INFO:   C:     0.283333
 W: 10	I: 6
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.169792
+INFO:   C:     0.285417
 W: 10	I: 7
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.012500
+INFO:   C:     0.238542
 W: 10	I: 8
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 10	I: 9
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.003125
 W: 10	I: 10
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.004167
 W: 11	I: 0
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 11	I: 1
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.080208
 W: 11	I: 2
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 11	I: 3
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.083333
 W: 11	I: 4
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.005208
+INFO:   C:     0.134375
 W: 11	I: 5
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.248958
+INFO:   C:     0.283333
 W: 11	I: 6
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.218750
+INFO:   C:     0.283333
 W: 11	I: 7
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.169792
+INFO:   C:     0.285417
 W: 11	I: 8
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.012500
+INFO:   C:     0.238542
 W: 11	I: 9
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 11	I: 10
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.003125
 W: 11	I: 11
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.004167
 W: 12	I: 0
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 12	I: 1
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.080208
 W: 12	I: 2
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 12	I: 3
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.083333
 W: 12	I: 4
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.002083
+INFO:   C:     0.135417
 W: 12	I: 5
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.264583
+INFO:   C:     0.282292
 W: 12	I: 6
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.257292
+INFO:   C:     0.283333
 W: 12	I: 7
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.218750
+INFO:   C:     0.283333
 W: 12	I: 8
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.169792
+INFO:   C:     0.285417
 W: 12	I: 9
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.012500
+INFO:   C:     0.238542
 W: 12	I: 10
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 12	I: 11
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.003125
 W: 12	I: 12
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.004167
 W: 13	I: 0
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 13	I: 1
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 13	I: 2
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.082292
 W: 13	I: 3
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.083333
 W: 13	I: 4
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.137500
 W: 13	I: 5
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.260417
+INFO:   C:     0.281250
 W: 13	I: 6
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.285417
+INFO:   C:     0.282292
 W: 13	I: 7
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.257292
+INFO:   C:     0.283333
 W: 13	I: 8
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.218750
+INFO:   C:     0.283333
 W: 13	I: 9
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.169792
+INFO:   C:     0.285417
 W: 13	I: 10
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.012500
+INFO:   C:     0.238542
 W: 13	I: 11
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 13	I: 12
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.003125
 W: 13	I: 13
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.004167
 W: 14	I: 0
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 14	I: 1
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 14	I: 2
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.082292
 W: 14	I: 3
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.083333
 W: 14	I: 4
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.136458
 W: 14	I: 5
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.262500
+INFO:   C:     0.281250
 W: 14	I: 6
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.283333
+INFO:   C:     0.281250
 W: 14	I: 7
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.285417
+INFO:   C:     0.282292
 W: 14	I: 8
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.257292
+INFO:   C:     0.283333
 W: 14	I: 9
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.218750
+INFO:   C:     0.283333
 W: 14	I: 10
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.169792
+INFO:   C:     0.285417
 W: 14	I: 11
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.012500
+INFO:   C:     0.238542
 W: 14	I: 12
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 14	I: 13
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.003125
 W: 14	I: 14
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.004167
 W: 15	I: 0
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 15	I: 1
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 15	I: 2
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 15	I: 3
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.083333
 W: 15	I: 4
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.136458
 W: 15	I: 5
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.262500
+INFO:   C:     0.281250
 W: 15	I: 6
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.286458
+INFO:   C:     0.281250
 W: 15	I: 7
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.283333
+INFO:   C:     0.281250
 W: 15	I: 8
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.285417
+INFO:   C:     0.282292
 W: 15	I: 9
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.257292
+INFO:   C:     0.283333
 W: 15	I: 10
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.218750
+INFO:   C:     0.283333
 W: 15	I: 11
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.169792
+INFO:   C:     0.285417
 W: 15	I: 12
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.012500
+INFO:   C:     0.238542
 W: 15	I: 13
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 15	I: 14
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.003125
 W: 15	I: 15
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.004167
 W: 16	I: 0
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 16	I: 1
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.080208
 W: 16	I: 2
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 16	I: 3
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.083333
 W: 16	I: 4
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.001042
+INFO:   C:     0.136458
 W: 16	I: 5
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.259375
+INFO:   C:     0.282292
 W: 16	I: 6
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.286458
+INFO:   C:     0.281250
 W: 16	I: 7
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.286458
+INFO:   C:     0.281250
 W: 16	I: 8
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.283333
+INFO:   C:     0.281250
 W: 16	I: 9
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.285417
+INFO:   C:     0.282292
 W: 16	I: 10
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.257292
+INFO:   C:     0.283333
 W: 16	I: 11
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.218750
+INFO:   C:     0.283333
 W: 16	I: 12
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.169792
+INFO:   C:     0.285417
 W: 16	I: 13
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.012500
+INFO:   C:     0.238542
 W: 16	I: 14
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.082292
 W: 16	I: 15
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.003125
 W: 16	I: 16
 INFO: Correctness:
 INFO:   Keras: 0.281250
-INFO:   C:     0.000000
+INFO:   C:     0.004167

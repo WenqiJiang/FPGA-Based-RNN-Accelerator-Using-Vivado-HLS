@@ -5,8 +5,8 @@
 #     keep track of which couple (W,I) with the smalles W gives us the best accuracy
 
 # a sample test
-START_LEN=12
-END_LEN=16
+START_LEN=8
+END_LEN=11
 LOG="dse_log_${START_LEN}_${END_LEN}.log"
 touch $LOG
 
