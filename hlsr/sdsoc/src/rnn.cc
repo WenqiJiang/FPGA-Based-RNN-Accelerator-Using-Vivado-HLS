@@ -19,7 +19,7 @@ void rnn_load_input_state(FDATA_T input_state_part[TILE_BATCH * RNN_INPUT_SIZE],
 #pragma HLS PIPELINE
 
       input_state_reg[batch_iter][input_state_index] =
-          input_state[input_state_start_index + input_state_index];
+          input_state_part[input_state_start_index + input_state_index];
     }
   }
 }
@@ -40,7 +40,7 @@ void rnn_load_last_state(FDATA_T last_state_part[TILE_BATCH * RNN_STATE_SIZE],
 #pragma HLS PIPELINE
 
       last_state_reg[batch_iter][last_state_index] =
-          last_state[last_state_start_index + last_state_index];
+          last_state_part[last_state_start_index + last_state_index];
     }
   }
 }
@@ -58,13 +58,12 @@ void rnn_load_kernel(FDATA_T kernel_part[RNN_INPUT_SIZE],
 //#pragma HLS UNROLL factor=2
 #pragma HLS PIPELINE
 
-    kernel_reg[input_state_index] = kernel[input_state_index];
+    kernel_reg[input_state_index] = kernel_part[input_state_index];
   }
 }
 
-void rnn_load_recurrent_kernel(FDATA_T recurrent_kernel[RNN_STATE_SIZE],
-                               FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE],
-                               LDATA_T output_state_index) {
+void rnn_load_recurrent_kernel(FDATA_T recurrent_kernel_part[RNN_STATE_SIZE],
+                               FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE]) {
 // #pragma HLS inline region
   // load the (output_state_index)'th column of recurrent_kernel
   // used this column do matrix multiplication
@@ -75,7 +74,8 @@ void rnn_load_recurrent_kernel(FDATA_T recurrent_kernel[RNN_STATE_SIZE],
 //#pragma HLS UNROLL factor=2
 #pragma HLS PIPELINE
 
-    recurrent_kernel_reg[last_state_index] = recurrent_kernel[last_state_index];
+    recurrent_kernel_reg[last_state_index] = 
+        recurrent_kernel_part[last_state_index];
   }
 }
 
@@ -198,7 +198,7 @@ void rnn_compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
                                  local_reg[batch_iter][1 + i];
     }
 
-    output_state_reg[batch_iter] = local_reg[batch_iter][0];
+    output_state_reg_part[batch_iter] = local_reg[batch_iter][0];
   }
 }
 
