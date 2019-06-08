@@ -2,18 +2,16 @@
 #include "types.h"
 #include "constants.h"
 
-void load_input_state(FDATA_T input_state[RNN_BATCH_SIZE * RNN_INPUT_SIZE],
-                      FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
-                      LDATA_T start_batch_index) {
+void rnn_load_input_state(FDATA_T input_state_part[TILE_BATCH * RNN_INPUT_SIZE],
+                          FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE]) {
 
   // load a batch of input state, the batch size is TILE_BATCH
-  // start from start_batch_index
+  // start from a certain batch index (decided when function call)
   // input_state  --- load to ---> input_state_reg
 
   for (LDATA_T batch_iter = 0; batch_iter < TILE_BATCH; batch_iter++) {
 
-    LDATA_T input_state_start_index = (start_batch_index + batch_iter) *
-                                      RNN_INPUT_SIZE;
+    LDATA_T input_state_start_index = batch_iter * RNN_INPUT_SIZE;
 
     for (LDATA_T input_state_index = 0; input_state_index < RNN_INPUT_SIZE;
          input_state_index++) {
@@ -26,18 +24,16 @@ void load_input_state(FDATA_T input_state[RNN_BATCH_SIZE * RNN_INPUT_SIZE],
   }
 }
 
-void load_last_state(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE],
-                     FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE],
-                     LDATA_T start_batch_index) {
+void rnn_load_last_state(FDATA_T last_state_part[TILE_BATCH * RNN_STATE_SIZE],
+                         FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE]) {
 
   // load a batch of last state, the batch size is TILE_BATCH
-  // start from start_batch_index
+  // start from a certain start batch index (decided when function call)
   // last_state  --- load to ---> last_state_reg
 
   for (LDATA_T batch_iter = 0; batch_iter < TILE_BATCH; batch_iter++) {
 
-    LDATA_T last_state_start_index = (start_batch_index + batch_iter) *
-                                    RNN_STATE_SIZE;
+    LDATA_T last_state_start_index = batch_iter * RNN_STATE_SIZE;
     for (LDATA_T last_state_index = 0; last_state_index < RNN_STATE_SIZE;
          last_state_index++) {
 //#pragma HLS UNROLL factor=2
@@ -49,56 +45,50 @@ void load_last_state(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE],
   }
 }
 
-void load_kernel(FDATA_T kernel[RNN_STATE_SIZE * RNN_INPUT_SIZE],
-                 FDATA_T kernel_reg[RNN_INPUT_SIZE],
-                 LDATA_T output_state_index) {
+void rnn_load_kernel(FDATA_T kernel_part[RNN_INPUT_SIZE],
+                     FDATA_T kernel_reg[RNN_INPUT_SIZE]) {
 //#pragma HLS inline region
   // load the (output_state_index)'th column of kernel
   // used this column do matrix multiplication
+  // the kernel start from a certain index (decided when function call)
   // kernel --- load to ---> kernel_reg
 
-  LDATA_T kernel_start_index = output_state_index * RNN_INPUT_SIZE;
   for (LDATA_T input_state_index = 0; input_state_index < RNN_INPUT_SIZE;
        input_state_index++) {
 //#pragma HLS UNROLL factor=2
 #pragma HLS PIPELINE
 
-    kernel_reg[input_state_index] =
-        kernel[kernel_start_index + input_state_index];
+    kernel_reg[input_state_index] = kernel[input_state_index];
   }
 }
 
-void load_recurrent_kernel(
-    FDATA_T recurrent_kernel[RNN_STATE_SIZE * RNN_STATE_SIZE],
-    FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE],
-    LDATA_T output_state_index) {
-#pragma HLS inline region
+void rnn_load_recurrent_kernel(FDATA_T recurrent_kernel[RNN_STATE_SIZE],
+                               FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE],
+                               LDATA_T output_state_index) {
+// #pragma HLS inline region
   // load the (output_state_index)'th column of recurrent_kernel
   // used this column do matrix multiplication
   // recurrent_kernel --- load to ---> recurrent_kernel_reg
 
-  LDATA_T recurrent_kernel_start_index = output_state_index * RNN_STATE_SIZE;
   for (LDATA_T last_state_index = 0; last_state_index < RNN_STATE_SIZE;
        last_state_index++) {
 //#pragma HLS UNROLL factor=2
 #pragma HLS PIPELINE
 
-    recurrent_kernel_reg[last_state_index] =
-        recurrent_kernel[recurrent_kernel_start_index + last_state_index];
+    recurrent_kernel_reg[last_state_index] = recurrent_kernel[last_state_index];
   }
 }
 
-void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
-             FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE],
-             FDATA_T kernel_reg[RNN_INPUT_SIZE],
-             FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE],
-             LDATA_T output_state_index,
-             FDATA_T output_state_reg[TILE_BATCH][RNN_STATE_SIZE]) {
+void rnn_compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
+                 FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE],
+                 FDATA_T kernel_reg[RNN_INPUT_SIZE],
+                 FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE],
+                 FDATA_T output_state_reg_part[TILE_BATCH]) {
 //#pragma HLS inline region
   // take a batch of input_state and last_state,
-  //  compute the output state, and store into the output_state_reg
+  //  rnn_compute the output state, and store into the output_state_reg
   // note that we don't add bias here, the bias addition will be done in
-  //  function "save_output_state"
+  //  function "rnn_save_output_state"
   // input: input_state_reg, last_state_reg, kernel_reg,
   //          recurrent_kernel_reg, output_state_index
   // output: output_state_reg
@@ -208,12 +198,11 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
                                  local_reg[batch_iter][1 + i];
     }
 
-    output_state_reg[batch_iter][output_state_index] =
-        local_reg[batch_iter][0];
+    output_state_reg[batch_iter] = local_reg[batch_iter][0];
   }
 }
 
-void load_kernels_and_compute(
+void rnn_load_kernels_and_compute(
     FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
     FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE],
     FDATA_T kernel[RNN_STATE_SIZE * RNN_INPUT_SIZE],
@@ -221,7 +210,7 @@ void load_kernels_and_compute(
     FDATA_T output_state_reg[TILE_BATCH][RNN_STATE_SIZE]) {
 
   // take loaded states as input, with a batch size of TILE_BATCH
-  // load kernel then compute
+  // load kernel then rnn_compute
   // input: input_state_reg, last_state_reg, kernel_reg, recurrent_kernel_reg
   // output: output_state_reg
 //#pragma HLS inline region
@@ -236,29 +225,31 @@ void load_kernels_and_compute(
 // #pragma HLS DATAFLOW
 
     // load
-    load_kernel(kernel + 100, kernel_reg, output_state_index);
-    load_recurrent_kernel(recurrent_kernel, recurrent_kernel_reg,
-                          output_state_index);
+    rnn_load_kernel(kernel + output_state_index * RNN_INPUT_SIZE, kernel_reg);
+    rnn_load_recurrent_kernel(
+        recurrent_kernel + output_state_index * RNN_STATE_SIZE, 
+        recurrent_kernel_reg);
 
-    // compute a batch of output (but haven't add bias)
-    compute(input_state_reg, last_state_reg, kernel_reg,
-            recurrent_kernel_reg, output_state_index, output_state_reg);
+    // rnn_compute a batch of output (but haven't add bias)
+    rnn_compute(input_state_reg, last_state_reg, kernel_reg,
+                recurrent_kernel_reg, output_state_index, 
+                output_state_reg + output_state_index * TILE_BATCH);
   }
 }
 
-void save_output_state(FDATA_T output_state_reg[TILE_BATCH][RNN_STATE_SIZE],
-                       FDATA_T bias[RNN_STATE_SIZE],
-                       FDATA_T output_state[RNN_BATCH_SIZE * RNN_STATE_SIZE],
-                       LDATA_T start_batch_index) {
+void rnn_save_output_state(FDATA_T output_state_reg[RNN_STATE_SIZE][TILE_BATCH],
+                           FDATA_T bias[RNN_STATE_SIZE],
+                           FDATA_T output_state[TILE_BATCH * RNN_STATE_SIZE]) {
 
   // the output state in register is not the final result,
   // add bias to finish computing and store them into BRAM
+  // the output state starts from a certain index (decided when function call)
+  // output state memory layout [TILE_BATCH][RNN_STATE_SIZE]
   // output_state_reg + bias --- load to ---> output_state
 
   for (LDATA_T batch_iter = 0; batch_iter < TILE_BATCH; batch_iter++) {
 
-    LDATA_T output_state_start_index = (start_batch_index + batch_iter) * 
-                                       RNN_STATE_SIZE;
+    LDATA_T output_state_start_index = batch_iter * RNN_STATE_SIZE;
     for (LDATA_T output_state_index = 0;
          output_state_index < RNN_STATE_SIZE; output_state_index++) {
 //#pragma HLS UNROLL factor=2
@@ -266,7 +257,7 @@ void save_output_state(FDATA_T output_state_reg[TILE_BATCH][RNN_STATE_SIZE],
 
       output_state[output_state_start_index + output_state_index] =
           bias[output_state_index] +
-          output_state_reg[batch_iter][output_state_index];
+          output_state_reg[output_state_index][batch_iter];
     }
   }
 }
@@ -293,11 +284,11 @@ void rnn(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE],
   // tile = 32
   FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE];
   FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE];
-  FDATA_T output_state_reg[TILE_BATCH][RNN_STATE_SIZE];
+  FDATA_T output_state_reg[RNN_STATE_SIZE][TILE_BATCH];
 
 #pragma HLS ARRAY_PARTITION variable=input_state_reg dim=2
 #pragma HLS ARRAY_PARTITION variable=last_state_reg dim=2
-#pragma HLS ARRAY_PARTITION variable=output_state_reg dim=1
+#pragma HLS ARRAY_PARTITION variable=output_state_reg dim=2
 
 BATCH:
   for (LDATA_T batch_iter = 0; batch_iter < RNN_BATCH_SIZE / TILE_BATCH;
@@ -305,16 +296,18 @@ BATCH:
 // #pragma HLS DATAFLOW
 
     // load
-    load_input_state(input_state, input_state_reg, batch_iter * TILE_BATCH);
-    load_last_state(last_state, last_state_reg, batch_iter * TILE_BATCH);
+    rnn_load_input_state(input_state + batch_iter * TILE_BATCH * RNN_INPUT_SIZE, 
+                         input_state_reg);
+    rnn_load_last_state(last_state + batch_iter * TILE_BATCH * RNN_STATE_SIZE, 
+                        last_state_reg);
 
-    // compute + load kernel
-    load_kernels_and_compute(input_state_reg, last_state_reg, kernel,
-                             recurrent_kernel, output_state_reg);
+    // rnn_compute + load kernel
+    rnn_load_kernels_and_compute(input_state_reg, last_state_reg, kernel,
+                                 recurrent_kernel, output_state_reg);
 
     // save
-    save_output_state(output_state_reg, bias, output_state,
-                      batch_iter * TILE_BATCH);
+    rnn_save_output_state(output_state_reg, bias, output_state,
+                          batch_iter * TILE_BATCH);
   }
 }
 
@@ -333,3 +326,7 @@ void wrapper_rnn(FDATA_T* last_state, FDATA_T* input_state, FDATA_T* bias,
   rnn<FDATA_T> (last_state, input_state, bias, kernel, 
                 recurrent_kernel, output_state);
 }
+
+
+// TODO(wenqi): advanced optimization, merge rnn_load_kernels_and_compute and 
+// rnn_save_output_state
