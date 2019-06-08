@@ -105,7 +105,7 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
 
 
   FDATA_T local_reg[TILE_BATCH][RNN_STATE_SIZE + RNN_INPUT_SIZE];
-//#pragma HLS ARRAY_PARTITION variable=local_reg dim=2
+#pragma HLS ARRAY_PARTITION variable=local_reg dim=2
 
   for (LDATA_T batch_iter = 0; batch_iter < TILE_BATCH; batch_iter++) {
 #pragma HLS UNROLL factor=8
@@ -113,7 +113,7 @@ void compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
 
     for (LDATA_T input_state_index = 0; input_state_index < RNN_INPUT_SIZE;
          input_state_index++) {
-#pragma HLS UNROLL complete
+#pragma HLS UNROLL factor=16
 
       local_reg[batch_iter][input_state_index] =
           kernel_reg[input_state_index] *
@@ -228,15 +228,15 @@ void load_kernels_and_compute(
 
   FDATA_T kernel_reg[RNN_INPUT_SIZE];
   FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE];
-//#pragma HLS ARRAY_PARTITION variable=kernel_reg dim=1
-//#pragma HLS ARRAY_PARTITION variable=recurrent_kernel_reg dim=1
+#pragma HLS ARRAY_PARTITION variable=kernel_reg dim=1
+#pragma HLS ARRAY_PARTITION variable=recurrent_kernel_reg dim=1
 
   for (LDATA_T output_state_index = 0; output_state_index < RNN_STATE_SIZE;
        output_state_index++) {
 // #pragma HLS DATAFLOW
 
     // load
-    load_kernel(kernel, kernel_reg, output_state_index);
+    load_kernel(kernel + 100, kernel_reg, output_state_index);
     load_recurrent_kernel(recurrent_kernel, recurrent_kernel_reg,
                           output_state_index);
 
@@ -295,9 +295,9 @@ void rnn(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE],
   FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE];
   FDATA_T output_state_reg[TILE_BATCH][RNN_STATE_SIZE];
 
-// #pragma HLS ARRAY_PARTITION variable=input_state_reg dim=2
-// #pragma HLS ARRAY_PARTITION variable=last_state_reg dim=2
-// #pragma HLS ARRAY_PARTITION variable=output_state_reg dim=1
+#pragma HLS ARRAY_PARTITION variable=input_state_reg dim=2
+#pragma HLS ARRAY_PARTITION variable=last_state_reg dim=2
+#pragma HLS ARRAY_PARTITION variable=output_state_reg dim=1
 
 BATCH:
   for (LDATA_T batch_iter = 0; batch_iter < RNN_BATCH_SIZE / TILE_BATCH;
