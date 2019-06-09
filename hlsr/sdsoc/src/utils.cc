@@ -1,9 +1,10 @@
 // This file defines some auxilliary functions such as loading data from txt 
 // files, copying arrays and printing arrays.
-
+#pragma once
 #include "utils.h"
 
 #include <cstdio>
+#include <stdio.h>
 
 template <>
 void load_data(char const* fname, FDATA_T* array, LDATA_T length) {
@@ -16,11 +17,17 @@ void load_data(char const* fname, FDATA_T* array, LDATA_T length) {
     exit(1);
   }
 
-  for(LDATA_T i = 0; i < length; i++)
-  {
-    LDATA_T r = fscanf(data_file,"%40f", &array[i]);
-    (void) r; // suppress warning unused variable
+  // Read floating point values from file and convert them to FDATA_T.
+  float *flt_array = (float*) malloc(length * sizeof(double));
+
+  for (LDATA_T i = 0; i < length; i++) {
+    LDATA_T r = fscanf(data_file, "%40f", &flt_array[i]);
+    (void)r;  // suppress warning unused variable
+
+    array[i] = FDATA_T(flt_array[i]);
   }
+
+  free(flt_array);
 
   fclose(data_file);
 }
@@ -73,3 +80,14 @@ void print_data(IDATA_T* input, LDATA_T length) {
   }
 }
 
+template <>
+void transpose(FDATA_T* src, FDATA_T* dst, const IDATA_T ROW, const IDATA_T COL)
+{
+  // transpose array
+  // the source array has shape of (row, col)
+
+  for (IDATA_T row = 0; row < ROW; row++) {
+    for (IDATA_T col = 0; col < COL; col++) 
+      dst[col * ROW + row] = src[row * COL + col];
+  }
+}

@@ -1,11 +1,8 @@
-
 // This file defines the activation functions inlcude ReLU amd tanh
+#pragma once
 
 #include "types.h"
 #include "activation.h"
-
-#include <cmath> // import exponential function: exp (val)
-
 
 template <>
 void act_relu(FDATA_T* input_feature_map, LDATA_T length) {
@@ -15,7 +12,8 @@ void act_relu(FDATA_T* input_feature_map, LDATA_T length) {
   //            is did by doing x > 0? x : 0 elementwise
   // length:   the number of input / output FM elements
   for (LDATA_T i = 0; i < length; i++) {
-    input_feature_map[i] = input_feature_map[i] > 0? input_feature_map[i] : 0;
+    input_feature_map[i] = input_feature_map[i] > FDATA_T(0) ?
+                           input_feature_map[i] : FDATA_T(0);
   }
 }
 
