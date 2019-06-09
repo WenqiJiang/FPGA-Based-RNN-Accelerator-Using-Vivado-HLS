@@ -292,8 +292,8 @@ void rnn(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE],
 
   // declare registers and use array partition
   // tile = 32
-#pragma HLS ARRAY_PARTITION variable=kernel cyclic factor=2
-#pragma HLS ARRAY_PARTITION variable=recurrent_kernel cyclic factor=2
+//#pragma HLS ARRAY_PARTITION variable=kernel cyclic factor=2
+//#pragma HLS ARRAY_PARTITION variable=recurrent_kernel cyclic factor=2
   FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE];
   FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE];
   FDATA_T output_state_reg[RNN_STATE_SIZE][TILE_BATCH];
@@ -333,9 +333,12 @@ BATCH:
 #pragma SDS data zero_copy(output_state[0: (RNN_BATCH_SIZE * RNN_STATE_SIZE)])
 
 
-void wrapper_rnn(FDATA_T* last_state, FDATA_T* input_state, FDATA_T* bias,
-                 FDATA_T* kernel, FDATA_T* recurrent_kernel, 
-                 FDATA_T* output_state) {
+void wrapper_rnn(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE],
+		         FDATA_T input_state[RNN_BATCH_SIZE * RNN_INPUT_SIZE],
+				 FDATA_T bias[RNN_STATE_SIZE],
+                 FDATA_T kernel[RNN_STATE_SIZE * RNN_INPUT_SIZE],
+				 FDATA_T recurrent_kernel[RNN_STATE_SIZE * RNN_STATE_SIZE],
+                 FDATA_T output_state[RNN_BATCH_SIZE * RNN_STATE_SIZE]) {
 
   rnn<FDATA_T> (last_state, input_state, bias, kernel, 
                 recurrent_kernel, output_state);
