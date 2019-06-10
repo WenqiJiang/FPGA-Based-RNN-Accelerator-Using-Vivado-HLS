@@ -95,7 +95,7 @@ void rnn_compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
 
 #define COMPUTE_UNROLL 8
   FDATA_T local_reg[COMPUTE_UNROLL][RNN_STATE_SIZE + RNN_INPUT_SIZE];
-#pragma HLS ARRAY_PARTITION variable=local_reg cyclic factor=64 dim=2
+#pragma HLS ARRAY_PARTITION variable=local_reg cyclic factor=16 dim=2
 
 for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
      tile_iter++) {
@@ -108,7 +108,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       for (LDATA_T input_state_index = 0; input_state_index < RNN_INPUT_SIZE;
            input_state_index++) {
 // #pragma HLS RESOURCE variable=local_reg core=FMul_meddsp
-#pragma HLS UNROLL complete
+#pragma HLS UNROLL factor=16
 
         local_reg[batch_iter][input_state_index] =
             kernel_reg[input_state_index] *
@@ -119,7 +119,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       for (LDATA_T last_state_index = 0; last_state_index < RNN_STATE_SIZE;
            last_state_index++) {
   // #pragma HLS RESOURCE variable=local_reg core=FMul_meddsp
-#pragma HLS UNROLL complete
+#pragma HLS UNROLL factor=16
 
         local_reg[batch_iter][RNN_INPUT_SIZE + last_state_index] =
             recurrent_kernel_reg[last_state_index] *
@@ -131,7 +131,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
 
       // prefix sum
       for (LDATA_T i = 0; i < 114; i++) {
-#pragma HLS UNROLL complete
+#pragma HLS UNROLL factor=16
   //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
@@ -139,7 +139,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       }
 
       for (LDATA_T i = 0; i < 57; i++) {
-#pragma HLS UNROLL complete
+#pragma HLS UNROLL factor=16
   //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
@@ -149,7 +149,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // 57 = 28 * 2 + 1 -> need 29 reg for next iteration
       // the 57'th number will be copy to 29'th reg
       for (LDATA_T i = 0; i < 28; i++) {
-#pragma HLS UNROLL complete
+#pragma HLS UNROLL factor=16
   //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
@@ -227,8 +227,8 @@ void rnn_load_kernels_and_compute(
 
   FDATA_T kernel_reg[RNN_INPUT_SIZE];
   FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE];
-#pragma HLS ARRAY_PARTITION variable=kernel_reg cyclic factor=64 dim=1
-#pragma HLS ARRAY_PARTITION variable=recurrent_kernel_reg cyclic factor=64 dim=1
+#pragma HLS ARRAY_PARTITION variable=kernel_reg cyclic factor=16 dim=1
+#pragma HLS ARRAY_PARTITION variable=recurrent_kernel_reg cyclic factor=16 dim=1
 
   for (LDATA_T output_state_index = 0; output_state_index < RNN_STATE_SIZE;
        output_state_index++) {
@@ -298,8 +298,8 @@ void rnn(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE],
   FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE];
   FDATA_T output_state_reg[RNN_STATE_SIZE][TILE_BATCH];
 
-#pragma HLS ARRAY_PARTITION variable=input_state_reg cyclic factor=64 dim=2
-#pragma HLS ARRAY_PARTITION variable=last_state_reg cyclic factor=64 dim=2
+#pragma HLS ARRAY_PARTITION variable=input_state_reg cyclic factor=16 dim=2
+#pragma HLS ARRAY_PARTITION variable=last_state_reg cyclic factor=16 dim=2
 ///// HACKING! output_reg factor should be the same as COMPUTE_UNROLL /////
 ///// but HLS syntax does not support macro as parameter /////
 #pragma HLS ARRAY_PARTITION variable=output_state_reg cyclic factor=8 dim=2
