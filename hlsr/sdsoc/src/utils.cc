@@ -6,6 +6,9 @@
 #include <cstdio>
 #include <stdio.h>
 
+#ifndef TOFLOAT
+#define TOFLOAT(a) a.to_double()
+#endif
 template <>
 void load_data(char const* fname, FDATA_T* array, LDATA_T length) {
 
@@ -69,7 +72,7 @@ void copy_data(IDATA_T* copy_from, IDATA_T* copy_to, LDATA_T length) {
 template <>
 void print_data(FDATA_T* input, LDATA_T length) {
   for (LDATA_T i = 0; i < length; i ++) {
-    printf("%.10f\n", input[i]);
+    printf("%.10f\n", TOFLOAT(input[i]));
   }
 }
 
@@ -81,7 +84,7 @@ void print_data(IDATA_T* input, LDATA_T length) {
 }
 
 template <>
-void transpose(FDATA_T* src, FDATA_T* dst, const IDATA_T ROW, const IDATA_T COL)
+void transpose(FDATA_T* src, FDATA_T* dst, IDATA_T ROW, IDATA_T COL)
 {
   // transpose array
   // the source array has shape of (row, col)

@@ -1,6 +1,7 @@
 // This file declares the activation functions inlcude ReLU amd tanh
 
 #pragma once
+#include "types.h"
 
 template <typename DT, typename DL>
 void act_relu(DT* input_feature_map, DL length);

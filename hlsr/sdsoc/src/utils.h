@@ -14,3 +14,5 @@ void copy_data(DT* copy_from, DT* copy_to, LT length);
 template <typename DT, typename LT>
 void print_data(DT* input, LT length);
 
+template <typename DT, typename LT>
+void transpose(DT* src, DT* dst, LT ROW, LT COL);

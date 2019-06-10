@@ -1,13 +1,11 @@
 // This file defines the datatype in this project
 #pragma once
 
-#include "ap_int.h"
-#include "ap_fixed.h"
-
 #define IDATA_T int
-#define LDATA_T size_t
+// HACKING! sdsoc does not support size_t?
+//#define LDATA_T size_t
+#define LDATA_T int
 
-#if 1
 #include "ap_int.h"
 #include "ap_fixed.h"
 #include "hls_math.h"
@@ -29,8 +27,3 @@
 
 #define TOFLOAT(a) a.to_double()
 
-#else
-#include <cmath> // import exponential function: exp (val)
-#define FDATA_T float
-#define TOFLOAT(a) a
-#endif

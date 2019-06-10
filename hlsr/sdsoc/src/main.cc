@@ -59,7 +59,11 @@ int main(int argc, char *argv[]) {
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_STATE_SIZE);
   FDATA_T* rnn_kernel = 
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_INPUT_SIZE * RNN_STATE_SIZE);
+  FDATA_T* rnn_kernel_transpose = 
+      (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_INPUT_SIZE * RNN_STATE_SIZE);
   FDATA_T* rnn_recurrent_kernel = 
+      (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_STATE_SIZE * RNN_STATE_SIZE);
+  FDATA_T* rnn_recurrent_kernel_transpose = 
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_STATE_SIZE * RNN_STATE_SIZE);
   FDATA_T* rnn_output_state = 
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * RNN_BATCH_SIZE * RNN_STATE_SIZE);
@@ -68,6 +72,8 @@ int main(int argc, char *argv[]) {
   FDATA_T* fc_bias = 
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * FC_OUTPUT_SIZE);
   FDATA_T* fc_kernel = 
+      (FDATA_T*) MALLOC(sizeof(FDATA_T) * FC_INPUT_SIZE * FC_OUTPUT_SIZE);
+  FDATA_T* fc_kernel_transpose = 
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * FC_INPUT_SIZE * FC_OUTPUT_SIZE);
   FDATA_T* fc_output_feature_map = 
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * FC_BATCH_SIZE * FC_OUTPUT_SIZE);
@@ -100,11 +106,18 @@ int main(int argc, char *argv[]) {
   load_data<FDATA_T, LDATA_T>(DENSE_KERNEL_FILE, fc_kernel, 
                               FC_INPUT_SIZE * FC_OUTPUT_SIZE);
 // transpose kernels                     <
-  transpose(rnn_kernel, rnn_kernel_transpose, RNN_INPUT_SIZE, RNN_STATE_SIZE);
-  transpose(rnn_recurrent_kernel, rnn_recurrent_kernel_transpose, 
-            RNN_STATE_SIZE, RNN_STATE_SIZE);
-  transpose(fc_kernel, fc_kernel_transpose, FC_INPUT_SIZE, FC_OUTPUT_SIZE);
+  transpose<FDATA_T, LDATA_T>(rnn_kernel, rnn_kernel_transpose, RNN_INPUT_SIZE, 
+                              RNN_STATE_SIZE);
+  transpose<FDATA_T, LDATA_T>(
+      rnn_recurrent_kernel, rnn_recurrent_kernel_transpose, RNN_STATE_SIZE, 
+      RNN_STATE_SIZE);
+  transpose<FDATA_T, LDATA_T>(fc_kernel, fc_kernel_transpose, FC_INPUT_SIZE,
+                              FC_OUTPUT_SIZE);
 
+// free untransposed kernels
+  MFREE(rnn_kernel);
+  MFREE(rnn_recurrent_kernel);
+  MFREE(fc_kernel);
 #ifdef DEBUG
   print_data<FDATA_T, LDATA_T>(fc_kernel, FC_INPUT_SIZE * FC_OUTPUT_SIZE);
 #endif
@@ -150,8 +163,9 @@ int main(int argc, char *argv[]) {
       print_data<FDATA_T, LDATA_T>(rnn_input_state, 
                                    RNN_INPUT_SIZE * RNN_BATCH_SIZE);
 #endif
-      wrapper_rnn(rnn_last_state, rnn_input_state, rnn_bias, rnn_kernel, 
-                  rnn_recurrent_kernel, rnn_output_state);
+      wrapper_rnn(rnn_last_state, rnn_input_state, rnn_bias, 
+                  rnn_kernel_transpose, rnn_recurrent_kernel_transpose, 
+                  rnn_output_state);
       act_tanh<FDATA_T, LDATA_T>(rnn_output_state, 
                                  RNN_BATCH_SIZE * RNN_STATE_SIZE);
 #ifdef DEBUG
@@ -167,12 +181,14 @@ int main(int argc, char *argv[]) {
 #ifdef DEBUG
     print_data<FDATA_T, LDATA_T>(rnn_last_state, RNN_BATCH_SIZE*RNN_STATE_SIZE);
 #endif
-    fc<FDATA_T>(rnn_last_state, fc_bias, fc_kernel, fc_output_feature_map);
+    fc<FDATA_T>(rnn_last_state, fc_bias, fc_kernel_transpose, 
+                fc_output_feature_map);
 #ifdef DEBUG
     print_data<FDATA_T, LDATA_T>(fc_output_feature_map, 
                                  FC_BATCH_SIZE * FC_OUTPUT_SIZE);
 #endif
-    softmax<FDATA_T>(fc_output_feature_map, softmax_result);
+    // HACKING! remove softmax at this point: <cmath> crashed with hls_math.h
+    // softmax<FDATA_T>(fc_output_feature_map, softmax_result);
     argmax<FDATA_T, IDATA_T>(fc_output_feature_map, argmax_result);
     copy_data<IDATA_T, LDATA_T>(
         argmax_result, &C_result[compute_time*RNN_BATCH_SIZE], RNN_BATCH_SIZE);
@@ -210,11 +226,11 @@ int main(int argc, char *argv[]) {
   MFREE(rnn_last_state);
   MFREE(rnn_input_state);
   MFREE(rnn_bias);
-  MFREE(rnn_kernel);
-  MFREE(rnn_recurrent_kernel);
+  MFREE(rnn_kernel_transpose);
+  MFREE(rnn_recurrent_kernel_transpose);
   MFREE(rnn_output_state);
   MFREE(fc_bias);
-  MFREE(fc_kernel);
+  MFREE(fc_kernel_transpose);
   MFREE(fc_output_feature_map);
   MFREE(softmax_result);
   MFREE(argmax_result);

@@ -2,7 +2,7 @@
 #include "softmax.h"
 #include "constants.h"
 
-#include <cmath> // import exponential function: exp (val)
+// #include <cmath> // import exponential function: exp (val)
 #include <cstdlib>
 
 template<>
