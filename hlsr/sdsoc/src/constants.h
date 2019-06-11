@@ -54,3 +54,11 @@
 // Softmax layer dimension:
 //    input_feature_map: SM_BATCH_SIZE * SM_CLASS_SIZE
 //    output_feature_map: SM_BATCH_SIZE * SM_CLASS_SIZE
+
+// Dateset -> 1,000 samples, each of them has 50 words
+#define SAMPLE_NUM 1000
+#define SAMPLE_LEN 50
+
+#define BATCH_SIZE RNN_BATCH_SIZE
+#define COMPUTE_TIME SAMPLE_NUM / BATCH_SIZE
+
