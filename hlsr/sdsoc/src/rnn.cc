@@ -108,7 +108,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       for (LDATA_T input_state_index = 0; input_state_index < RNN_INPUT_SIZE;
            input_state_index++) {
 // #pragma HLS RESOURCE variable=local_reg core=FMul_meddsp
-#pragma HLS UNROLL factor=16
+#pragma HLS UNROLL complete
 
         local_reg[batch_iter][input_state_index] =
             kernel_reg[input_state_index] *
@@ -119,7 +119,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       for (LDATA_T last_state_index = 0; last_state_index < RNN_STATE_SIZE;
            last_state_index++) {
   // #pragma HLS RESOURCE variable=local_reg core=FMul_meddsp
-#pragma HLS UNROLL factor=16
+#pragma HLS UNROLL complete
 
         local_reg[batch_iter][RNN_INPUT_SIZE + last_state_index] =
             recurrent_kernel_reg[last_state_index] *
@@ -131,7 +131,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
 
       // prefix sum
       for (LDATA_T i = 0; i < 114; i++) {
-#pragma HLS UNROLL factor=16
+#pragma HLS UNROLL complete
   //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
@@ -139,7 +139,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       }
 
       for (LDATA_T i = 0; i < 57; i++) {
-#pragma HLS UNROLL factor=16
+#pragma HLS UNROLL complete
   //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
@@ -149,7 +149,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // 57 = 28 * 2 + 1 -> need 29 reg for next iteration
       // the 57'th number will be copy to 29'th reg
       for (LDATA_T i = 0; i < 28; i++) {
-#pragma HLS UNROLL factor=16
+#pragma HLS UNROLL complete
   //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +

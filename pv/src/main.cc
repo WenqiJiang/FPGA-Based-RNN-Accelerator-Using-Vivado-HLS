@@ -91,11 +91,16 @@ int main(int argc, char *argv[]) {
             act_tanh<FDATA_T, LDATA_T>(rnn_output_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
 #ifdef DEBUG
             print_data<FDATA_T, LDATA_T>(rnn_output_state, RNN_STATE_SIZE * RNN_BATCH_SIZE);
-#endif
+        if (compute_time==0 && i >= 48) {
+                for (int j = 0; j < 2* RNN_STATE_SIZE; j++)
+                        printf("%f\t", TOFLOAT(rnn_output_state[j]));
+                printf("\n");
+        }
             FDATA_T* temp = rnn_last_state;
             rnn_last_state = rnn_output_state;
             rnn_output_state = temp;
         }
+#endif
         // no ReLu after FC layer, only softmax
 #ifdef DEBUG
         print_data<FDATA_T, LDATA_T>(rnn_last_state, RNN_BATCH_SIZE * RNN_STATE_SIZE);
