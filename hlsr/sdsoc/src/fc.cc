@@ -47,7 +47,7 @@ void fc(FDATA_T* input_feature_map, FDATA_T* bias, FDATA_T* kernel, FDATA_T* out
 
         // kernel[output_feature_map_index][input_feature_map_index]
         LDATA_T current_kernel_index = output_feature_map_index * FC_INPUT_SIZE+
-            output_feature_map_index;
+            input_feature_map_index;
 
         // do multiplication, add to previous value
         output_feature_map[current_output_feature_map_index] +=
