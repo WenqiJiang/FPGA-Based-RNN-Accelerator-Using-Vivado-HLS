@@ -1,8 +1,8 @@
 #pragma once
-
 #include "types.h"
-// void wrapper_fc(FDATA_T* input_feature_map, FDATA_T* bias, FDATA_T* kernel, FDATA_T* output_feature_map);
+#include "constants.h"
 
-template <typename DT>
-void fc(DT* input_feature_map, DT* bias, DT* kernel, DT* output_feature_map);
-
+void fc(FDATA_T input_feature_map[FC_BATCH_SIZE * FC_INPUT_SIZE], 
+        FDATA_T bias[FC_OUTPUT_SIZE], 
+        FDATA_T kernel[FC_OUTPUT_SIZE * FC_INPUT_SIZE], 
+        FDATA_T output_feature_map[FC_BATCH_SIZE * FC_OUTPUT_SIZE]);

@@ -1,14 +1,12 @@
 // This file defines some auxilliary functions such as loading data from txt 
 // files, copying arrays and printing arrays.
-#pragma once
 #include "utils.h"
 
-#include <cstdio>
 #include <stdio.h>
+#include <cstdio>
 
-#ifndef TOFLOAT
-#define TOFLOAT(a) a.to_double()
-#endif
+#include "types.h"
+
 template <>
 void load_data(char const* fname, FDATA_T* array, LDATA_T length) {
 

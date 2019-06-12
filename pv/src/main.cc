@@ -96,21 +96,22 @@ int main(int argc, char *argv[]) {
   load_data<IDATA_T, LDATA_T>(ACTUAL_RESULT_FILE, Actual_result,
                               COMPUTE_TIME * BATCH_SIZE);
 
+  // arrange input states 
   for (LDATA_T compute_time = 0; compute_time < COMPUTE_TIME; compute_time++) {
 
     for (LDATA_T seq_idx = 0; seq_idx < SAMPLE_LEN; seq_idx++) {
 
       for (LDATA_T batch_idx = 0; batch_idx < BATCH_SIZE; batch_idx++) {
-	
+  
         // seq alignment [ ... first 50 words ...][ ... second 50 words ...]
-	LDATA_T row = compute_time * BATCH_SIZE + batch_idx;
-	LDATA_T col = seq_idx;
+  LDATA_T row = compute_time * BATCH_SIZE + batch_idx;
+  LDATA_T col = seq_idx;
         LDATA_T sample_index = row * SAMPLE_LEN + col; 
         LDATA_T word_index = sequences[sample_index];
         LDATA_T word_embedding_index = word_index * WORD_SIZE;
 
-	// input state alignment
-	// [COMPUTE_TIME][SAMPLE_LEN][BATCH_SIZE][RNN_INPUT_SIZE]
+  // input state alignment
+  // [COMPUTE_TIME][SAMPLE_LEN][BATCH_SIZE][RNN_INPUT_SIZE]
         LDATA_T rnn_input_states_index = 
             compute_time * SAMPLE_LEN * BATCH_SIZE * RNN_INPUT_SIZE +
             seq_idx * BATCH_SIZE * RNN_INPUT_SIZE + batch_idx * RNN_INPUT_SIZE;
