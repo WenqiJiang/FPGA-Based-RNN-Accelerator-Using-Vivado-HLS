@@ -87,6 +87,7 @@ CXX_SOURCES += main.cc
 CXX_SOURCES += utils.cc
 CXX_SOURCES += softmax.cc
 CXX_SOURCES += activation.cc
+CXX_SOURCES += wrapper.cc
 
 CXX_HEADERS :=
 CXX_HEADERS += fc.h
@@ -97,6 +98,7 @@ CXX_HEADERS += config.h
 CXX_HEADERS += softmax.h
 CXX_HEADERS += constants.h
 CXX_HEADERS += activation.h
+CXX_HEADERS += wrapper.h
 
 .SUFFIXES: .cc .h .o
 

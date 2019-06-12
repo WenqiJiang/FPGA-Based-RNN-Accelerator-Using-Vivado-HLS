@@ -1,4 +1,6 @@
 #pragma once
+#include "types.h"
+#include "constants.h"
 
 void rnn(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE], 
          FDATA_T input_state[RNN_BATCH_SIZE * RNN_INPUT_SIZE], 

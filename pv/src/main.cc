@@ -10,6 +10,7 @@
 #include "softmax.h"
 #include "constants.h"
 #include "activation.h"
+#include "wrapper.h"
 
 #define abs(x) x > 0? x: 0
 
@@ -90,19 +91,29 @@ int main(int argc, char *argv[]) {
 
   load_data<IDATA_T, LDATA_T>(
       ORG_SEQ_FILE, sequences, COMPUTE_TIME * BATCH_SIZE * SAMPLE_LEN);
-  load_data<IDATA_T, LDATA_T>(RNN_RESULT_FILE, Keras_result, SAMPLE_NUM);
-  load_data<IDATA_T, LDATA_T>(ACTUAL_RESULT_FILE, Actual_result, SAMPLE_NUM);
+  load_data<IDATA_T, LDATA_T>(RNN_RESULT_FILE, Keras_result, 
+                              COMPUTE_TIME * BATCH_SIZE);
+  load_data<IDATA_T, LDATA_T>(ACTUAL_RESULT_FILE, Actual_result,
+                              COMPUTE_TIME * BATCH_SIZE);
 
   for (LDATA_T compute_time = 0; compute_time < COMPUTE_TIME; compute_time++) {
 
     for (LDATA_T seq_idx = 0; seq_idx < SAMPLE_LEN; seq_idx++) {
 
       for (LDATA_T batch_idx = 0; batch_idx < BATCH_SIZE; batch_idx++) {
-        LDATA_T sample_index = compute_time * SAMPLE_LEN * BATCH_SIZE + 
-                               seq_idx * SAMPLE_LEN + batch_idx;
+	
+        // seq alignment [ ... first 50 words ...][ ... second 50 words ...]
+	LDATA_T row = compute_time * BATCH_SIZE + batch_idx;
+	LDATA_T col = seq_idx;
+        LDATA_T sample_index = row * SAMPLE_LEN + col; 
         LDATA_T word_index = sequences[sample_index];
         LDATA_T word_embedding_index = word_index * WORD_SIZE;
-        LDATA_T rnn_input_states_index = sample_index * RNN_INPUT_SIZE;
+
+	// input state alignment
+	// [COMPUTE_TIME][SAMPLE_LEN][BATCH_SIZE][RNN_INPUT_SIZE]
+        LDATA_T rnn_input_states_index = 
+            compute_time * SAMPLE_LEN * BATCH_SIZE * RNN_INPUT_SIZE +
+            seq_idx * BATCH_SIZE * RNN_INPUT_SIZE + batch_idx * RNN_INPUT_SIZE;
         copy_data<FDATA_T, LDATA_T>(&word_embedding[word_embedding_index], 
                                     &rnn_input_states[rnn_input_states_index], 
                                     RNN_INPUT_SIZE);
@@ -138,34 +149,28 @@ int main(int argc, char *argv[]) {
         count_Keras++;
     if (C_result[i] == Actual_result[i])
         count_C++;
-
+// #define VERBOSE
 #ifdef VERBOSE
     if (C_result[i] == Keras_result[i])
       printf("INFO: Sample %d:\t result: %d\n", i, C_result[i]);
     else {
-      printf("INFO: Sample %d:\t C_result: %d\t Keras_result: %d\t Actual_result: %d\t P(%d): %f\t P(%d): %lf\t delta_P: %lf\n",
+      printf("INFO: Sample %d:\t C_result: %d\t Keras_result: %d\t Actual_result: %d\t P(%d): %f\t P(%d): %lf\n",
               i, C_result[i], Keras_result[i], Actual_result[i],
-              C_result[i], softmax_result[(i - compute_time * BATCH_SIZE) * SM_CLASS_SIZE + C_result[i]],
-              Keras_result[i], softmax_result[(i - compute_time * BATCH_SIZE) * SM_CLASS_SIZE + Keras_result[i]],
-              abs(softmax_result[(i - compute_time * BATCH_SIZE) * SM_CLASS_SIZE + C_result[i]] -
-                  softmax_result[(i - compute_time * BATCH_SIZE) * SM_CLASS_SIZE + Keras_result[i]]));
+              C_result[i], TOFLOAT(softmax_result[i * SM_CLASS_SIZE + C_result[i]]),
+              Keras_result[i], TOFLOAT(softmax_result[i * SM_CLASS_SIZE + Keras_result[i]]));
     }
 #endif
   }
-
   printf("INFO: Correctness:\n");
   printf("INFO:   Keras: %f\n", (float) count_Keras / count_times);
   printf("INFO:   C:     %f\n", (float) count_C / count_times);
 
   free(word_embedding);
-  free(rnn_last_state);
-  free(rnn_input_state);
   free(rnn_bias);
-  free(rnn_kernel);
-  free(rnn_recurrent_kernel);
-  free(rnn_output_state);
+  free(rnn_kernel_transpose);
+  free(rnn_recurrent_kernel_transpose);
   free(fc_bias);
-  free(fc_kernel);
+  free(fc_kernel_transpose);
   free(fc_output_feature_map);
   free(softmax_result);
   free(argmax_result);
