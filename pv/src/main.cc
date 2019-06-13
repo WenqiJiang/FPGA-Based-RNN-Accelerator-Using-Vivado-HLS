@@ -36,7 +36,15 @@ int main(int argc, char *argv[]) {
   FDATA_T* rnn_input_states = /* store all input states */
       (FDATA_T*) malloc(sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * 
                         BATCH_SIZE * RNN_INPUT_SIZE);
-
+#ifdef DEBUG
+printf("\nCOMPUTE_TIME:%d\n", COMPUTE_TIME);
+printf("SAMPLE_LEN:%d\n", SAMPLE_LEN);
+printf("BATCH_SIZE:%d\n", BATCH_SIZE);
+printf("RNN_INPUT_SIZE:%d\n", RNN_INPUT_SIZE);
+printf("sizeof(FDATA_T):%d\n", sizeof(FDATA_T));
+	printf("\n%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN *
+                        BATCH_SIZE * RNN_INPUT_SIZE);
+#endif
   // FC
   FDATA_T* fc_bias = 
       (FDATA_T*) malloc(sizeof(FDATA_T) * FC_OUTPUT_SIZE);

@@ -1,5 +1,4 @@
 // This file defines the activation functions inlcude ReLU amd tanh
-#pragma once
 
 #include "types.h"
 #include "activation.h"

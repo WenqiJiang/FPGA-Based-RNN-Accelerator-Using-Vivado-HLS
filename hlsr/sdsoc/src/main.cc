@@ -4,12 +4,13 @@
 #include "activation.h"
 #include "config.h"
 #include "constants.h"
-#include "fc.h"
+// #include "fc.h"
 #include "init.h"
-#include "rnn.h"
+// #include "rnn.h"
 #include "softmax.h"
 #include "types.h"
 #include "utils.h"
+#include "wrapper.h"
 
 #define abs(x) x > 0? x: 0
 
@@ -62,7 +63,7 @@ int main(int argc, char *argv[]) {
   FDATA_T* rnn_input_states = /* store all input states */
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * 
                         BATCH_SIZE * RNN_INPUT_SIZE);
-
+printf("size:\t%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE * RNN_INPUT_SIZE);
   // FC
   FDATA_T* fc_bias = 
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * FC_OUTPUT_SIZE);
@@ -76,6 +77,7 @@ int main(int argc, char *argv[]) {
   FDATA_T* softmax_result = 
       (FDATA_T*) MALLOC(sizeof(FDATA_T)*COMPUTE_TIME*BATCH_SIZE*SM_CLASS_SIZE);
   IDATA_T* argmax_result = 
+      (IDATA_T*) malloc(sizeof(IDATA_T) * COMPUTE_TIME * BATCH_SIZE);
 
   // Dataset
   IDATA_T* sequences = 
@@ -166,6 +168,7 @@ int main(int argc, char *argv[]) {
 #ifdef __SDSCC__
   f_ctr.start();
 #endif
+/*
   wrapper_rnn_fc(rnn_kernel_transpose, rnn_recurrent_kernel_transpose,
                  rnn_bias, fc_kernel_transpose, fc_bias, rnn_input_states, 
                  fc_output_feature_map);
@@ -185,7 +188,7 @@ int main(int argc, char *argv[]) {
                      softmax_result + softmax_offset);
     argmax<FDATA_T, IDATA_T>(fc_output_feature_map + fc_output_offset, 
                              argmax_result + argmax_offset);
-  }
+  }*/
   copy_data<IDATA_T, LDATA_T>(argmax_result, C_result, COMPUTE_TIME*BATCH_SIZE);
 
   // Correctness
@@ -215,12 +218,9 @@ int main(int argc, char *argv[]) {
   printf("INFO:   C:     %f\n\r", (float) count_C / count_times);
 
   MFREE(word_embedding);
-  MFREE(rnn_last_state);
-  MFREE(rnn_input_state);
   MFREE(rnn_bias);
   MFREE(rnn_kernel_transpose);
   MFREE(rnn_recurrent_kernel_transpose);
-  MFREE(rnn_output_state);
   MFREE(fc_bias);
   MFREE(fc_kernel_transpose);
   MFREE(fc_output_feature_map);

@@ -30,26 +30,32 @@ VPATH :=
 VPATH += ../src
 
 ##########################################
-TOP_HW_FUNCTION := wrapper_rnn
-TOP_HW_FUNCTION_SOURCES := rnn.cc
+TOP_HW_FUNCTION := wrapper_rnn_fc
+TOP_HW_FUNCTION_SOURCES := wrapper.cc
+#SUB_HW_FUNCTION_SOURCES :=
+#SUB_HW_FUNCTION_SOURCES += fc.cc 
+#SUB_HW_FUNCTION_SOURCES += rnn.cc
 ##########################################
 
 INCDIR :=
 INCDIR += -I../src
 
 CXX_HOST_SOURCES :=
-CXX_HOST_SOURCES += fc.cc
-CXX_HOST_SOURCES += rnn.cc
+CXX_HOST_SOURCES += activation.cc
+#CXX_HOST_SOURCES += fc.cc
 CXX_HOST_SOURCES += init.cc
 CXX_HOST_SOURCES += main.cc
-CXX_HOST_SOURCES += utils.cc
+#CXX_HOST_SOURCES += rnn.cc
 CXX_HOST_SOURCES += softmax.cc
-CXX_HOST_SOURCES += activation.cc
+CXX_HOST_SOURCES += utils.cc
+CXX_HOST_SOURCES += wrapper.cc
 
 SDS_FLAGS :=
 SDS_FLAGS += -sds-pf $(TARGET_BOARD)
 SDS_FLAGS += -sds-hw $(TOP_HW_FUNCTION) $(TOP_HW_FUNCTION_SOURCES) -sds-end
-
+#SDS_FLAGS += -sds-hw $(TOP_HW_FUNCTION) $(TOP_HW_FUNCTION_SOURCES) -files ../src/rnn.cc,../src/fc.cc -sds-end
+#SDS_FLAGS += -sds-hw rnn rnn.cc -sds-end
+#SDS_FLAGS += -sds-hw fc fc.cc -sds-end
 CXX := sds++ $(SDS_FLAGS)
 
 CXX_FLAGS :=

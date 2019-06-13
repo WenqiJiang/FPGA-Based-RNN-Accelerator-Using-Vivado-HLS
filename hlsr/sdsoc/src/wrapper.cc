@@ -15,9 +15,174 @@
     input_state[0: COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE * RNN_INPUT_SIZE])
 #pragma SDS data zero_copy(output[0:COMPUTE_TIME * BATCH_SIZE * FC_OUTPUT_SIZE])
 
-#pragma DATA ACCESS_PATTERN(rnn_kernel:SEQUENTIAL, \
-                            rnn_recurrent_kernel:SEQUENTIAL, \
-                            rnn_bias:SEQUENTIAL)
+#pragma SDS data access_pattern(rnn_kernel:SEQUENTIAL, \
+                                rnn_recurrent_kernel:SEQUENTIAL, \
+                                rnn_bias:SEQUENTIAL)
+
+
+void fc(FDATA_T input_feature_map[FC_BATCH_SIZE * FC_INPUT_SIZE], 
+        FDATA_T bias[FC_OUTPUT_SIZE], 
+        FDATA_T kernel[FC_OUTPUT_SIZE * FC_INPUT_SIZE], 
+        FDATA_T output_feature_map[FC_BATCH_SIZE * FC_OUTPUT_SIZE]) {
+
+  // please do INITIALIZATION before input output_feature_map
+  // ------- DIMENSION SETTING  ----------
+
+  //  input_feature_map: FC_BATCH_SIZE * FC_INPUT_SIZE (None * 128)
+  //  bias: FC_OUTPUT_SIZE (16192)
+  //  kernel: tranposed -> FC_OUTPUT_SIZE * FC_INPUT_SIZE  (16192 * 128)
+  //  output_feature_map: FC_BATCH_SIZE * FC_OUTPUT_SIZE (None * 16192)
+
+  for (LDATA_T batch_index = 0; batch_index < FC_BATCH_SIZE; batch_index++) {
+    // compute each sample in a batch
+
+    for (LDATA_T output_feature_map_index = 0;
+         output_feature_map_index < FC_OUTPUT_SIZE;
+         output_feature_map_index++) {
+
+      // compute output_feature_map[batch_index][output_feature_map_index]
+      // each output_feature_map has FC_OUTPUT_SIZE elements, compute each of them
+      //  * each computation is a vector vector multiplication
+      //  * vector 1: input_feature_map
+      //  * vector 2: a row of weights
+
+      // output_feature_map[batch_index][output_feature_map_index]
+      LDATA_T current_output_feature_map_index = batch_index * FC_OUTPUT_SIZE +
+          output_feature_map_index;
+
+      // initialize to 0
+      output_feature_map[current_output_feature_map_index] = 0;
+
+      for (LDATA_T input_feature_map_index = 0;
+          input_feature_map_index < FC_INPUT_SIZE;
+          input_feature_map_index++) {
+
+        // output_feature_map[batch_index][output_feature_map_index] +=
+        //      input_feature_map[batch_index][input_feature_map_index] *
+        //      kernel[output_feature_map_index][input_feature_map_index]
+
+        // input_feature_map[batch_index][input_feature_map_index]
+        LDATA_T current_input_feature_map_index = 
+            batch_index * FC_INPUT_SIZE + input_feature_map_index;
+
+        // kernel[output_feature_map_index][input_feature_map_index]
+        LDATA_T current_kernel_index = 
+            output_feature_map_index * FC_INPUT_SIZE + input_feature_map_index;
+
+        // do multiplication, add to previous value
+        output_feature_map[current_output_feature_map_index] +=
+            input_feature_map[current_input_feature_map_index] *
+            kernel[current_kernel_index];
+      }
+      // add bias: bias[current_output_feature_map_index]
+      output_feature_map[current_output_feature_map_index] +=
+          bias[output_feature_map_index];
+    }
+  }
+}
+
+void rnn(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE], 
+         FDATA_T input_state[RNN_BATCH_SIZE * RNN_INPUT_SIZE], 
+         FDATA_T bias[RNN_STATE_SIZE], 
+         FDATA_T kernel[RNN_STATE_SIZE * RNN_INPUT_SIZE], 
+         FDATA_T recurrent_kernel[RNN_STATE_SIZE * RNN_STATE_SIZE], 
+         FDATA_T output_state[RNN_BATCH_SIZE * RNN_STATE_SIZE]) {
+  // please do INITIALIZATION before input output_state
+  // ------- DIMENSION SETTING  ---------- *
+  //
+  //   input_state: RNN_BATCH_SIZE * RNN_INPUT_SIZE (None * 100)
+  //   last_state: RNN_BATCH_SIZE * RNN_STATE_SIZE (None * 128)
+  //   bias: RNN_STATE_SIZE (128)
+  //   kernel: transposed -> RNN_STATE_SIZE * RNN_INPUT_SIZE (128 * 100)
+  //   recurrent_kernel: transposed -> RNN_STATE_SIZE * RNN_STATE_SIZE (128 * 128)
+  //   output_state: RNN_BATCH_SIZE * RNN_STATE_SIZE (None, 128)
+
+  //  computation:
+  //
+  //    for each sample in batch:
+  //    output_state = input_state mul kernel +
+  //                   last_state mul recurrent_kernel +
+  //                   bias
+
+  for (LDATA_T batch_index = 0; batch_index < RNN_BATCH_SIZE; batch_index++) {
+    // placeholder: loop naming
+    // compute each sample in a batch
+
+    for (LDATA_T output_state_index = 0; output_state_index < RNN_STATE_SIZE; 
+         output_state_index++) {
+      // placeholder: loop naming
+      // compute output_state[batch_index][output_state_index]
+
+      // each output_state state has STATE_SIZE elements, compute each of them
+      // * each computation is a vector vector multiplication
+      // * vector 1: last_state concatenate input_state
+      // * vector 2: a row of weights
+
+      // output_state[batch_index][output_state_index]
+      LDATA_T current_output_state_index = 
+          batch_index * RNN_STATE_SIZE + output_state_index;
+
+      // initialize to 0
+      output_state[current_output_state_index] = 0;
+
+      // do multiplication: weights by last state
+      for (LDATA_T last_state_index = 0; last_state_index < RNN_STATE_SIZE;
+           last_state_index++) {
+        // placeholder: loop naming
+
+        // output_state[batch_index][output_state_index] +=
+        //                 last_state[batch_index][last_state_index] *
+        //                recurrent_kernel[output_state_index][last_state_index]
+
+        // last_state[batch_index][last_state_index]
+        LDATA_T current_last_state_index = 
+            batch_index * RNN_STATE_SIZE + last_state_index;
+
+        // recurrent_kernel[output_state_index][last_state_index]
+        LDATA_T current_recurrent_kernel_index = 
+            output_state_index * RNN_STATE_SIZE + last_state_index;
+
+        // do multiplication, add to previous value
+        // pr f("%f", last_state[current_last_state_index]);
+        output_state[current_output_state_index] += 
+            last_state[current_last_state_index] *
+            recurrent_kernel[current_recurrent_kernel_index];
+      }
+
+      // do multiplication: weights by input_state
+      for(LDATA_T input_state_index = 0; input_state_index < RNN_INPUT_SIZE;
+          input_state_index++) {
+        // placeholder: loop naming
+
+        // output_state[batch_index][output_state_index] +=
+        //                input_state[batch_index][input_state_index] *
+        //                kernel[output_state_index][input_state_index]
+
+        // input_state[batch_index][input_state_index]
+        LDATA_T current_input_state_index = 
+            batch_index * RNN_INPUT_SIZE + input_state_index;
+
+        // kernel[output_state_index][input_state_index]
+        LDATA_T current_kernel_index = output_state_index * RNN_INPUT_SIZE +
+            input_state_index;
+
+        // do multiplication, add to previous value
+        output_state[current_output_state_index] += 
+            input_state[current_input_state_index] *
+            kernel[current_kernel_index];
+      }
+
+      // add bias
+      // bias[output_state_index]
+      // HACKING!! should do this without conversion
+      output_state[current_output_state_index] = FDATA_T(tanh(TOFLOAT(
+          output_state[current_output_state_index]) + TOFLOAT(bias[output_state_index])));
+      //output_state[current_output_state_index] += bias[output_state_index];
+      //output_state[current_output_state_index] = tanh<FXD_W_LENGTH, FXD_I_LENGTH>(
+      //     output_state[current_output_state_index]);
+    }
+  }
+}
 
 void copy_array(FDATA_T* src, FDATA_T* dst, LDATA_T len) {
 #pragma HLS inline region

@@ -95,8 +95,11 @@ void rnn(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE],
 
       // add bias
       // bias[output_state_index]
-      output_state[current_output_state_index] = tanh(
-          output_state[current_output_state_index] + bias[output_state_index]);
+      // HACKING!! should do this without conversion
+      output_state[current_output_state_index] = FDATA_T(tanh(TOFLOAT(
+          output_state[current_output_state_index]) + TOFLOAT(bias[output_state_index])));
+      //output_state[current_output_state_index] = tanh(
+      //    output_state[current_output_state_index] + bias[output_state_index]);
     }
   }
 }
