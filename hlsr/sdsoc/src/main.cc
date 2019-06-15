@@ -14,26 +14,6 @@
 
 #define abs(x) x > 0? x: 0
 
-#ifdef __SDSCC__
-#include "sds_lib.h"
-class perf_counter {
-  public:
-    long unsigned tot, cnt, calls;
-    perf_counter() : tot(0), cnt(0), calls(0) {};
-    inline void reset() { tot = cnt = calls = 0; }
-    inline void start() { cnt = sds_clock_counter(); calls++; };
-    inline void stop() { tot += (sds_clock_counter() - cnt); };
-    inline long unsigned avg_cpu_cycles() { return (tot / calls); };
-};
-#define MALLOC sds_alloc
-#define MFREE sds_free
-#else
-#define MALLOC MALLOC
-#define MFREE free
-#endif
-
-
-
 int main(int argc, char *argv[]) {
   printf("INFO: C-RNN\n\r");
 #ifdef __SDSCC__
