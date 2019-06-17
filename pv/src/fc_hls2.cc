@@ -4,11 +4,10 @@
 #include "utils.h"
 
 
-template <typename DT>
-void fc(DT input_feature_map[FC_BATCH_SIZE * FC_INPUT_SIZE], 
-        DT bias[FC_OUTPUT_SIZE], 
-        DT kernel[FC_OUTPUT_SIZE * FC_INPUT_SIZE],
-        DT output_feature_map[FC_BATCH_SIZE * FC_OUTPUT_SIZE]);
+void fc(FDATA_T input_feature_map[FC_BATCH_SIZE * FC_INPUT_SIZE], 
+        FDATA_T bias[FC_OUTPUT_SIZE], 
+        FDATA_T kernel[FC_OUTPUT_SIZE * FC_INPUT_SIZE],
+        FDATA_T output_feature_map[FC_BATCH_SIZE * FC_OUTPUT_SIZE]);
 
 #define TILE_BATCH 32
 
@@ -213,7 +212,6 @@ void fc_save_output_feature_map(
   }
 }
 
-template<>
 void fc(FDATA_T input_feature_map[FC_BATCH_SIZE * FC_INPUT_SIZE], 
         FDATA_T bias[FC_OUTPUT_SIZE], 
         FDATA_T kernel[FC_OUTPUT_SIZE * FC_INPUT_SIZE],
@@ -266,13 +264,3 @@ BATCH:
 }
 
 
-// #pragma SDS data zero_copy(input_feature_map[0: (FC_BATCH_SIZE*FC_INPUT_SIZE)])
-// #pragma SDS data zero_copy(bias[0: FC_OUTPUT_SIZE])
-// #pragma SDS data zero_copy(kernel[0: (FC_INPUT_SIZE * FC_OUTPUT_SIZE)])
-// #pragma SDS data zero_copy(output_feature_map[0:(FC_BATCH_SIZE*FC_OUTPUT_SIZE)])
-
-
-void wrapper_fc(FDATA_T* input_feature_map, FDATA_T* bias, FDATA_T* kernel,
-                FDATA_T* output_feature_map) {
-  fc<FDATA_T>(input_feature_map, bias, kernel, output_feature_map);
-}

@@ -16,8 +16,8 @@ void copy_rnn_bias(FDATA_T src[RNN_STATE_SIZE],
 }
 
 // copy a constant amount of data [RNN_STATE_SIZE * RNN_STATE_SIZE]
-void copy_rnn_kernel(FDATA_T src[RNN_STATE_SIZE * RNN_STATE_SIZE], 
-                     FDATA_T dst[RNN_STATE_SIZE * RNN_STATE_SIZE]) {
+void copy_rnn_recurrent_kernel(FDATA_T src[RNN_STATE_SIZE * RNN_STATE_SIZE],
+                               FDATA_T dst[RNN_STATE_SIZE * RNN_STATE_SIZE]) {
 #pragma HLS inline region                                                       
   for (LDATA_T i = 0; i < RNN_STATE_SIZE * RNN_STATE_SIZE; i++) { 
 #pragma HLS pipeline rewind
@@ -26,8 +26,8 @@ void copy_rnn_kernel(FDATA_T src[RNN_STATE_SIZE * RNN_STATE_SIZE],
 }
 
 // copy a constant amount of data [RNN_STATE_SIZE * RNN_INPUT_SIZE]
-void copy_rnn_recurrent_kernel(FDATA_T src[RNN_STATE_SIZE * RNN_INPUT_SIZE], 
-                           FDATA_T dst[RNN_STATE_SIZE * RNN_INPUT_SIZE]) {
+void copy_rnn_kernel(FDATA_T src[RNN_STATE_SIZE * RNN_INPUT_SIZE],
+                     FDATA_T dst[RNN_STATE_SIZE * RNN_INPUT_SIZE]) {
 #pragma HLS inline region                                                       
   for (LDATA_T i = 0; i < RNN_STATE_SIZE * RNN_INPUT_SIZE; i++) {                                
 #pragma HLS pipeline rewind
@@ -156,10 +156,11 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
 /////// can not use macro as factor here due to the HLS syntax   //////
 #pragma HLS UNROLL factor=8
 //#pragma HLS RESOURCE variable=local_reg core=FMul_fulldsp
+//#pragma HLS RESOURCE variable=kernel_reg core=AddSub_DSP
 
       for (LDATA_T input_state_index = 0; input_state_index < RNN_INPUT_SIZE;
            input_state_index++) {
-// #pragma HLS RESOURCE variable=local_reg core=FMul_meddsp
+#pragma HLS RESOURCE variable=local_reg core=FMul_fulldsp
 #pragma HLS UNROLL factor=32
 
         local_reg[batch_iter][input_state_index] =
@@ -170,7 +171,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
 
       for (LDATA_T last_state_index = 0; last_state_index < RNN_STATE_SIZE;
            last_state_index++) {
-  // #pragma HLS RESOURCE variable=local_reg core=FMul_meddsp
+#pragma HLS RESOURCE variable=local_reg core=FMul_fulldsp
 #pragma HLS UNROLL factor=32
 
         local_reg[batch_iter][RNN_INPUT_SIZE + last_state_index] =
@@ -184,6 +185,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // prefix sum
       for (LDATA_T i = 0; i < 114; i++) {
 #pragma HLS UNROLL factor=32
+#pragma HLS RESOURCE variable=local_reg core=AddSub_DSP
   //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
@@ -192,7 +194,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
 
       for (LDATA_T i = 0; i < 57; i++) {
 #pragma HLS UNROLL factor=32
-  //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
+#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][57 + i];
@@ -202,7 +204,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // the 57'th number will be copy to 29'th reg
       for (LDATA_T i = 0; i < 28; i++) {
 #pragma HLS UNROLL complete
-  //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
+#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][28 + i];
@@ -213,7 +215,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // the 29'th number will be copy to 15'th reg
       for (LDATA_T i = 0; i < 14; i++) {
 #pragma HLS UNROLL complete
-  //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
+#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][14 + i];
@@ -224,7 +226,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // the 15'th number will be copy to 8'th reg
       for (LDATA_T i = 0; i < 7; i++) {
 #pragma HLS UNROLL complete
-  //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
+#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][7 + i];
@@ -243,7 +245,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // from 8, regular prefix sum
       for (LDATA_T i = 0; i < 2; i++) {
 #pragma HLS UNROLL complete
-  //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
+#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][2 + i];
@@ -252,7 +254,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // from 8, regular prefix sum
       for (LDATA_T i = 0; i < 1; i++) {
 #pragma HLS UNROLL complete
-  //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
+#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
 
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][1 + i];
@@ -316,10 +318,14 @@ void rnn_save_output_state(FDATA_T output_state_reg[RNN_STATE_SIZE][TILE_BATCH],
          output_state_index < RNN_STATE_SIZE; output_state_index++) {
 //#pragma HLS UNROLL factor=2
 #pragma HLS PIPELINE
+//    	FDATA_T tmp = bias[output_state_index] +
+//    	          output_state_reg[output_state_index][batch_iter];
 
       output_state[output_state_start_index + output_state_index] =
-          bias[output_state_index] +
-          output_state_reg[output_state_index][batch_iter];
+//          hls::tanh<FXD_W_LENGTH, FXD_I_LENGTH>(
+//          hls::tanh<FXD_W_LENGTH, FXD_I_LENGTH>(tmp);
+    		  tanh(bias[output_state_index] +
+    	          output_state_reg[output_state_index][batch_iter]);
     }
   }
 }
@@ -358,7 +364,7 @@ void rnn(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE],
 BATCH:
   for (LDATA_T batch_iter = 0; batch_iter < RNN_BATCH_SIZE / TILE_BATCH;
        batch_iter++) {
-#pragma HLS DATAFLOW
+// #pragma HLS DATAFLOW
 
     // load
     rnn_load_input_state(input_state + batch_iter * TILE_BATCH * RNN_INPUT_SIZE, 

@@ -19,7 +19,8 @@ void wrapper_rnn_fc(
   // malloc for rnn layer outputs
   FDATA_T* rnn_output_state = (FDATA_T*) 
       MALLOC(sizeof(FDATA_T) * BATCH_SIZE * RNN_STATE_SIZE);
-
+  FDATA_T* output_transpose = (FDATA_T*)
+      MALLOC(sizeof(FDATA_T) * FC_OUTPUT_SIZE * BATCH_SIZE);
   // 1,000 samples in total, 64 for 1 batch, so 15 iterations
   for (LDATA_T compute_time = 0; compute_time < COMPUTE_TIME; compute_time++) {
 
@@ -33,10 +34,14 @@ void wrapper_rnn_fc(
     // fc wrapper, 64 samples
     LDATA_T output_state_offset = compute_time * BATCH_SIZE * FC_OUTPUT_SIZE;
     wrapper_fc(/* input_feature_map = */rnn_output_state, fc_bias, fc_kernel, 
-               /* output_feature_map = */output + output_state_offset);
+               /* output_feature_map = */output_transpose);
+    transpose(/* src = */output_transpose, 
+              /* dst = */output + output_state_offset, 
+              /* src_row = */FC_OUTPUT_SIZE, /* src_col = */BATCH_SIZE);
   }
 
   MFREE(rnn_output_state);
+  MFREE(output_transpose);
 }
 
 // advanced architecture 3

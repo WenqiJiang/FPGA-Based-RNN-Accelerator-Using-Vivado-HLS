@@ -22,12 +22,12 @@ void copy_rnn_bias(FDATA_T src[RNN_STATE_SIZE],
                    FDATA_T dst[RNN_STATE_SIZE]);
 
 // copy a constant amount of data [RNN_STATE_SIZE * RNN_STATE_SIZE]
-void copy_rnn_kernel(FDATA_T src[RNN_STATE_SIZE * RNN_STATE_SIZE], 
-                     FDATA_T dst[RNN_STATE_SIZE * RNN_STATE_SIZE]);
+void copy_rnn_recurrent_kernel(FDATA_T src[RNN_STATE_SIZE * RNN_STATE_SIZE],
+                               FDATA_T dst[RNN_STATE_SIZE * RNN_STATE_SIZE]);
 
 // copy a constant amount of data [RNN_STATE_SIZE * RNN_INPUT_SIZE]
-void copy_rnn_recurrent_kernel(FDATA_T src[RNN_STATE_SIZE * RNN_INPUT_SIZE], 
-                           FDATA_T dst[RNN_STATE_SIZE * RNN_INPUT_SIZE]);
+void copy_rnn_kernel(FDATA_T src[RNN_STATE_SIZE * RNN_INPUT_SIZE],
+                     FDATA_T dst[RNN_STATE_SIZE * RNN_INPUT_SIZE]);
 
 // copy a constant amount of data [BATCH_SIZE * RNN_STATE_SIZE]
 void copy_rnn_output_state(FDATA_T src[BATCH_SIZE * RNN_STATE_SIZE],
