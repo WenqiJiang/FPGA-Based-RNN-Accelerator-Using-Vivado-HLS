@@ -46,8 +46,8 @@ void fc_compute(FDATA_T input_feature_map_reg[BATCH_SIZE][FC_INPUT_SIZE],
 
   // initialization
   FDATA_T local_reg[TILE_BATCH][FC_INPUT_SIZE];
-#pragma HLS ARRAY_PARTITION variable=local_reg dim=2 cyclic factor=16
-//#pragma HLS ARRAY_PARTITION variable=local_reg dim=1 cyclic factor=1
+#pragma HLS ARRAY_PARTITION variable=local_reg dim=2 cyclic factor=32
+#pragma HLS ARRAY_PARTITION variable=local_reg dim=1 cyclic factor=2
   for (LDATA_T iter = 0; iter < BATCH_SIZE / TILE_BATCH; iter++) {
 
     LDATA_T start_batch = iter * TILE_BATCH;
@@ -166,18 +166,18 @@ void wrapper_fc(FDATA_T input_feature_map[BATCH_SIZE * FC_INPUT_SIZE],
   FDATA_T input_feature_map_reg[BATCH_SIZE][FC_INPUT_SIZE];
   FDATA_T output_feature_map_reg[BATCH_SIZE];
 #pragma HLS ARRAY_PARTITION variable=input_feature_map_reg \
-    dim=2 cyclic factor=16
+    dim=2 cyclic factor=32
 ////////////////////       MENTION       /////////////////////
 // unroll in dimension 1 should be equal to TILE_BATCH 
-//#pragma HLS ARRAY_PARTITION variable=input_feature_map_reg \
-//    dim=1 cyclic factor=1
+#pragma HLS ARRAY_PARTITION variable=input_feature_map_reg \
+    dim=1 cyclic factor=2
 #pragma HLS ARRAY_PARTITION variable=output_feature_map_reg \
-    dim=1 cyclic factor=16
+    dim=1 cyclic factor=32
   // output feature map will be transposed later in CPU + DRAM
 
   FDATA_T kernel_reg[FC_INPUT_SIZE];
 //  FDATA_T bias_reg[FC_OUTPUT_SIZE];
-#pragma HLS ARRAY_PARTITION variable=kernel_reg dim=1 cyclic factor=16
+#pragma HLS ARRAY_PARTITION variable=kernel_reg dim=1 cyclic factor=32
   // bias read one at a time, so don't need to unroll
 
   // load preliminary data
