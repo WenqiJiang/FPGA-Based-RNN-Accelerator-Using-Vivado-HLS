@@ -145,23 +145,23 @@ void rnn_compute(FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
   //          recurrent_kernel_reg, output_state_index
   // output: output_state_reg
 
-#define COMPUTE_UNROLL 8
+#define COMPUTE_UNROLL 4
   FDATA_T local_reg[COMPUTE_UNROLL][RNN_STATE_SIZE + RNN_INPUT_SIZE];
-#pragma HLS ARRAY_PARTITION variable=local_reg cyclic factor=16 dim=2
+#pragma HLS ARRAY_PARTITION variable=local_reg cyclic factor=32 dim=2
+#pragma HLS ARRAY_PARTITION variable=local_reg cyclic factor=4 dim=1
 
 for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
      tile_iter++) {
+
     for (LDATA_T batch_iter = 0; batch_iter < COMPUTE_UNROLL; batch_iter++) {
 /////// HACKING, factor should be consistent with COMPUTE_UNROLL //////
 /////// can not use macro as factor here due to the HLS syntax   //////
-#pragma HLS UNROLL factor=8
-//#pragma HLS RESOURCE variable=local_reg core=FMul_fulldsp
-//#pragma HLS RESOURCE variable=kernel_reg core=AddSub_DSP
+#pragma HLS UNROLL complete
 
       for (LDATA_T input_state_index = 0; input_state_index < RNN_INPUT_SIZE;
            input_state_index++) {
-#pragma HLS RESOURCE variable=local_reg core=FMul_fulldsp
-#pragma HLS UNROLL factor=32
+//#pragma HLS RESOURCE variable=local_reg core=FMul_fulldsp
+#pragma HLS UNROLL complete
 
         local_reg[batch_iter][input_state_index] =
             kernel_reg[input_state_index] *
@@ -172,7 +172,7 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       for (LDATA_T last_state_index = 0; last_state_index < RNN_STATE_SIZE;
            last_state_index++) {
 #pragma HLS RESOURCE variable=local_reg core=FMul_fulldsp
-#pragma HLS UNROLL factor=32
+#pragma HLS UNROLL complete
 
         local_reg[batch_iter][RNN_INPUT_SIZE + last_state_index] =
             recurrent_kernel_reg[last_state_index] *
@@ -184,18 +184,13 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
 
       // prefix sum
       for (LDATA_T i = 0; i < 114; i++) {
-#pragma HLS UNROLL factor=32
-#pragma HLS RESOURCE variable=local_reg core=AddSub_DSP
-  //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
-
+#pragma HLS UNROLL complete
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][114 + i];
       }
 
       for (LDATA_T i = 0; i < 57; i++) {
-#pragma HLS UNROLL factor=32
-#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
-
+#pragma HLS UNROLL complete
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][57 + i];
       }
@@ -204,8 +199,6 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // the 57'th number will be copy to 29'th reg
       for (LDATA_T i = 0; i < 28; i++) {
 #pragma HLS UNROLL complete
-#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
-
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][28 + i];
       }
@@ -215,8 +208,6 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // the 29'th number will be copy to 15'th reg
       for (LDATA_T i = 0; i < 14; i++) {
 #pragma HLS UNROLL complete
-#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
-
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][14 + i];
       }
@@ -226,8 +217,6 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // the 15'th number will be copy to 8'th reg
       for (LDATA_T i = 0; i < 7; i++) {
 #pragma HLS UNROLL complete
-#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
-
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][7 + i];
       }
@@ -236,8 +225,6 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // from 8, regular prefix sum
       for (LDATA_T i = 0; i < 4; i++) {
 #pragma HLS UNROLL complete
-  //#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
-
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][4 + i];
       }
@@ -245,8 +232,6 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // from 8, regular prefix sum
       for (LDATA_T i = 0; i < 2; i++) {
 #pragma HLS UNROLL complete
-#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
-
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][2 + i];
       }
@@ -254,8 +239,6 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
       // from 8, regular prefix sum
       for (LDATA_T i = 0; i < 1; i++) {
 #pragma HLS UNROLL complete
-#pragma HLS RESOURCE variable=local_reg core=FAddSub_fulldsp
-
         local_reg[batch_iter][i] = local_reg[batch_iter][i] +
                                    local_reg[batch_iter][1 + i];
       }
@@ -266,43 +249,8 @@ for (LDATA_T tile_iter = 0; tile_iter < TILE_BATCH / COMPUTE_UNROLL;
   }
 }
 
-void rnn_load_kernels_and_compute(
-    FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE],
-    FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE],
-    FDATA_T kernel[RNN_STATE_SIZE * RNN_INPUT_SIZE],
-    FDATA_T recurrent_kernel[RNN_STATE_SIZE * RNN_STATE_SIZE],
-    FDATA_T output_state_reg[RNN_STATE_SIZE][TILE_BATCH]) {
-
-  // take loaded states as input, with a batch size of TILE_BATCH
-  // load kernel then rnn_compute
-  // input: input_state_reg, last_state_reg, kernel_reg, recurrent_kernel_reg
-  // output: output_state_reg
-//#pragma HLS inline region
-
-  FDATA_T kernel_reg[RNN_INPUT_SIZE];
-  FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE];
-#pragma HLS ARRAY_PARTITION variable=kernel_reg cyclic factor=16 dim=1
-#pragma HLS ARRAY_PARTITION variable=recurrent_kernel_reg cyclic factor=16 dim=1
-
-  for (LDATA_T output_state_index = 0; output_state_index < RNN_STATE_SIZE;
-       output_state_index++) {
-#pragma HLS DATAFLOW
-
-    // load
-    rnn_load_kernel(kernel + output_state_index * RNN_INPUT_SIZE, kernel_reg);
-    rnn_load_recurrent_kernel(
-        recurrent_kernel + output_state_index * RNN_STATE_SIZE, 
-        recurrent_kernel_reg);
-
-    // rnn_compute a batch of output (but haven't add bias)
-    rnn_compute(input_state_reg, last_state_reg, kernel_reg,
-                recurrent_kernel_reg,
-                &output_state_reg[output_state_index][0]);
-  }
-}
-
-void rnn_save_output_state(FDATA_T output_state_reg[RNN_STATE_SIZE][TILE_BATCH],
-                           FDATA_T bias[RNN_STATE_SIZE],
+void rnn_save_output_state(FDATA_T output_state_reg[TILE_BATCH],
+                           FDATA_T bias, LDATA_T col,
                            FDATA_T output_state[TILE_BATCH * RNN_STATE_SIZE]) {
 
   // the output state in register is not the final result,
@@ -312,21 +260,13 @@ void rnn_save_output_state(FDATA_T output_state_reg[RNN_STATE_SIZE][TILE_BATCH],
   // output_state_reg + bias --- load to ---> output_state
 
   for (LDATA_T batch_iter = 0; batch_iter < TILE_BATCH; batch_iter++) {
-
-    LDATA_T output_state_start_index = batch_iter * RNN_STATE_SIZE;
-    for (LDATA_T output_state_index = 0;
-         output_state_index < RNN_STATE_SIZE; output_state_index++) {
-//#pragma HLS UNROLL factor=2
 #pragma HLS PIPELINE
-//    	FDATA_T tmp = bias[output_state_index] +
-//    	          output_state_reg[output_state_index][batch_iter];
 
-      output_state[output_state_start_index + output_state_index] =
-//          hls::tanh<FXD_W_LENGTH, FXD_I_LENGTH>(
-//          hls::tanh<FXD_W_LENGTH, FXD_I_LENGTH>(tmp);
-    		  tanh(bias[output_state_index] +
-    	          output_state_reg[output_state_index][batch_iter]);
-    }
+    FDATA_T tmp = bias + output_state_reg[batch_iter];
+    LDATA_T output_state_index = batch_iter * RNN_STATE_SIZE + col;
+
+    output_state[output_state_index] =
+        hls::tanh<FXD_W_LENGTH, FXD_I_LENGTH>(tmp);
   }
 }
 
@@ -353,18 +293,22 @@ void rnn(FDATA_T last_state[RNN_BATCH_SIZE * RNN_STATE_SIZE],
 //#pragma HLS ARRAY_PARTITION variable=recurrent_kernel cyclic factor=2
   FDATA_T input_state_reg[TILE_BATCH][RNN_INPUT_SIZE];
   FDATA_T last_state_reg[TILE_BATCH][RNN_STATE_SIZE];
-  FDATA_T output_state_reg[RNN_STATE_SIZE][TILE_BATCH];
+  FDATA_T output_state_reg[TILE_BATCH];
 
-#pragma HLS ARRAY_PARTITION variable=input_state_reg cyclic factor=16 dim=2
-#pragma HLS ARRAY_PARTITION variable=last_state_reg cyclic factor=16 dim=2
-///// HACKING! output_reg factor should be the same as COMPUTE_UNROLL /////
-///// but HLS syntax does not support macro as parameter /////
-#pragma HLS ARRAY_PARTITION variable=output_state_reg cyclic factor=8 dim=2
+#pragma HLS ARRAY_PARTITION variable=input_state_reg cyclic factor=32 dim=2
+#pragma HLS ARRAY_PARTITION variable=input_state_reg cyclic factor=4 dim=1
+#pragma HLS ARRAY_PARTITION variable=last_state_reg cyclic factor=32 dim=2
+#pragma HLS ARRAY_PARTITION variable=last_state_reg cyclic factor=4 dim=1
+#pragma HLS ARRAY_PARTITION variable=output_state_reg complete 
+
+  FDATA_T kernel_reg[RNN_INPUT_SIZE];
+  FDATA_T recurrent_kernel_reg[RNN_STATE_SIZE];
+#pragma HLS ARRAY_PARTITION variable=kernel_reg cyclic factor=32 dim=1
+#pragma HLS ARRAY_PARTITION variable=recurrent_kernel cyclic factor=32 dim=1
 
 BATCH:
   for (LDATA_T batch_iter = 0; batch_iter < RNN_BATCH_SIZE / TILE_BATCH;
        batch_iter++) {
-// #pragma HLS DATAFLOW
 
     // load
     rnn_load_input_state(input_state + batch_iter * TILE_BATCH * RNN_INPUT_SIZE, 
@@ -372,13 +316,25 @@ BATCH:
     rnn_load_last_state(last_state + batch_iter * TILE_BATCH * RNN_STATE_SIZE, 
                         last_state_reg);
 
-    // rnn_compute + load kernel
-    rnn_load_kernels_and_compute(input_state_reg, last_state_reg, kernel,
-                                 recurrent_kernel, output_state_reg);
+LOAD_COMPUTE_SAVE:
+    for (LDATA_T output_state_index = 0; output_state_index < RNN_STATE_SIZE; 
+         output_state_index++) {
+#pragma HLS DATAFLOW 
+      // load 
+      rnn_load_kernel(kernel + output_state_index * RNN_INPUT_SIZE, kernel_reg);
+      rnn_load_recurrent_kernel(
+          recurrent_kernel + output_state_index * RNN_STATE_SIZE, 
+          recurrent_kernel_reg);
 
-    // save
-    rnn_save_output_state(output_state_reg, bias,
-    		              &output_state[batch_iter * TILE_BATCH * RNN_STATE_SIZE]);
+      // compute
+      rnn_compute(input_state_reg, last_state_reg, kernel_reg,
+                  recurrent_kernel_reg, output_state_reg);
+
+      // save
+      rnn_save_output_state(output_state_reg, bias[output_state_index],
+                            output_state_index, 
+                            output_state + batch_iter * RNN_STATE_SIZE);
+    } 
   }
 }
 
@@ -399,7 +355,7 @@ BATCH:
 void wrapper_rnn(FDATA_T rnn_bias[RNN_STATE_SIZE], 
                  FDATA_T rnn_kernel[RNN_STATE_SIZE * RNN_INPUT_SIZE], 
                  FDATA_T rnn_recurrent_kernel[RNN_STATE_SIZE * RNN_STATE_SIZE], 
-                 FDATA_T input_state[RNN_BATCH_SIZE * RNN_INPUT_SIZE],
+                 FDATA_T input_state[SAMPLE_LEN*RNN_BATCH_SIZE*RNN_INPUT_SIZE],
                  FDATA_T output_state[RNN_BATCH_SIZE * RNN_STATE_SIZE]) {
         
   // init last state inside the function, since the "first" last state is 0     

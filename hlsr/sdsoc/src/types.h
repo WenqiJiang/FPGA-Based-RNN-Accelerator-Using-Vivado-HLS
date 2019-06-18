@@ -23,7 +23,8 @@
 #define FXD_I_LENGTH 16
 #endif
 
-#define FDATA_T ap_fixed<FXD_W_LENGTH, FXD_I_LENGTH, AP_RND, AP_SAT>
+// #define FDATA_T ap_fixed<FXD_W_LENGTH, FXD_I_LENGTH, AP_RND, AP_SAT>
+#define FDATA_T ap_fixed<FXD_W_LENGTH, FXD_I_LENGTH>
 
 #define TOFLOAT(a) a.to_double()
 
