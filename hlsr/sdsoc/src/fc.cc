@@ -57,7 +57,7 @@ void fc_compute(FDATA_T input_feature_map_reg[BATCH_SIZE][FC_INPUT_SIZE],
       // compute
       for (LDATA_T i = 0; i < FC_INPUT_SIZE; i++) {
 #pragma HLS UNROLL complete
-#pragma HLS RESOURCE variable=local_reg core=FMul_fulldsp
+//#pragma HLS RESOURCE variable=local_reg core=FMul_fulldsp
         // MAC: output_FM_reg[i][output_feature_map_index] +=
         //          input_FM[i][j] * kernel[?][j]
         local_reg[batch_idx][i] = 

@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "rnn.h"
 #include "fc.h"
+#include "utils.h"
 
 // software control of 2 HW functions
 // finish 15 batches of computations, 64 samples each batch
@@ -35,7 +36,7 @@ void wrapper_rnn_fc(
     LDATA_T output_state_offset = compute_time * BATCH_SIZE * FC_OUTPUT_SIZE;
     wrapper_fc(/* input_feature_map = */rnn_output_state, fc_bias, fc_kernel, 
                /* output_feature_map = */output_transpose);
-    transpose(/* src = */output_transpose, 
+    transpose<FDATA_T,LDATA_T>(/* src = */output_transpose, 
               /* dst = */output + output_state_offset, 
               /* src_row = */FC_OUTPUT_SIZE, /* src_col = */BATCH_SIZE);
   }
