@@ -17,6 +17,9 @@ void wrapper_rnn_fc(
     FDATA_T input_state[COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE*RNN_INPUT_SIZE], 
     FDATA_T output[COMPUTE_TIME * BATCH_SIZE * FC_OUTPUT_SIZE]) {
 
+#ifdef __SDSCC__
+  perf_counter f_ctr;
+#endif
   // malloc for rnn layer outputs
   FDATA_T* rnn_output_state = (FDATA_T*) 
       MALLOC(sizeof(FDATA_T) * BATCH_SIZE * RNN_STATE_SIZE);
