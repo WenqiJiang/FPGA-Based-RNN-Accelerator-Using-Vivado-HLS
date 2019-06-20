@@ -45,14 +45,14 @@ void fc_compute(FDATA_T input_feature_map_reg[BATCH_SIZE][FC_INPUT_SIZE],
                 FDATA_T output_feature_map_reg[BATCH_SIZE]) {
 
   // initialization
-  FDATA_T local_reg[BATCH_SIZE][FC_INPUT_SIZE];
+  FDATA_T local_reg[FC_TILE_SIZE][FC_INPUT_SIZE];
 #pragma HLS ARRAY_PARTITION variable=local_reg dim=2 cyclic factor=32
 #pragma HLS ARRAY_PARTITION variable=local_reg dim=1 cyclic factor=2
-  for (LDATA_T iter = 0; iter < BATCH_SIZE / BATCH_SIZE; iter++) {
+  for (LDATA_T iter = 0; iter < BATCH_SIZE / FC_TILE_SIZE; iter++) {
 
-    LDATA_T start_batch = iter * BATCH_SIZE;
+    LDATA_T start_batch = iter * FC_TILE_SIZE;
 
-    for (LDATA_T batch_idx = 0; batch_idx < BATCH_SIZE; batch_idx++) {
+    for (LDATA_T batch_idx = 0; batch_idx < FC_TILE_SIZE; batch_idx++) {
 #pragma HLS UNROLL complete
       // compute
       for (LDATA_T i = 0; i < FC_INPUT_SIZE; i++) {
@@ -168,7 +168,7 @@ void wrapper_fc(FDATA_T input_feature_map[BATCH_SIZE * FC_INPUT_SIZE],
 #pragma HLS ARRAY_PARTITION variable=input_feature_map_reg \
     dim=2 cyclic factor=32
 ////////////////////       MENTION       /////////////////////
-// unroll in dimension 1 should be equal to BATCH_SIZE 
+// unroll in dimension 1 should be equal to FC_TILE_SIZE 
 #pragma HLS ARRAY_PARTITION variable=input_feature_map_reg \
     dim=1 cyclic factor=2
 #pragma HLS ARRAY_PARTITION variable=output_feature_map_reg \

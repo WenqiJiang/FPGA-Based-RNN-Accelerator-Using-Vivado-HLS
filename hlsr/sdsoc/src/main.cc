@@ -69,12 +69,6 @@ printf("size:\t%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE *
   IDATA_T* Actual_result =
       (IDATA_T*) MALLOC(sizeof(IDATA_T) * COMPUTE_TIME * BATCH_SIZE);
 
-#ifdef __SDSCC__
-  f_ctr.stop();
-  printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
-#endif
-  printf("INFO: model load\n\r");
-
   // load weights
   load_data<FDATA_T, LDATA_T>(EMBEDDINGS_FILE, word_embedding, 
                               WORD_NUM * WORD_SIZE);
@@ -87,7 +81,7 @@ printf("size:\t%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE *
   load_data<FDATA_T, LDATA_T>(DENSE_BIAS_FILE, fc_bias, FC_OUTPUT_SIZE);
   load_data<FDATA_T, LDATA_T>(DENSE_KERNEL_FILE, fc_kernel, 
                               FC_INPUT_SIZE * FC_OUTPUT_SIZE);
-// transpose kernels                     <
+// transpose kernels                     
   transpose<FDATA_T, LDATA_T>(rnn_kernel, rnn_kernel_transpose, RNN_INPUT_SIZE, 
                               RNN_STATE_SIZE);
   transpose<FDATA_T, LDATA_T>(
@@ -100,6 +94,13 @@ printf("size:\t%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE *
   MFREE(rnn_kernel);
   MFREE(rnn_recurrent_kernel);
   MFREE(fc_kernel);
+
+#ifdef __SDSCC__
+  f_ctr.stop();
+  printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
+#endif
+  printf("INFO: model load\n\r");
+
 #ifdef DEBUG
   print_data<FDATA_T, LDATA_T>(fc_kernel, FC_INPUT_SIZE * FC_OUTPUT_SIZE);
 #endif
@@ -108,6 +109,7 @@ printf("size:\t%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE *
 #ifdef __SDSCC__
   f_ctr.start();
 #endif
+
   // load dataset
   load_data<IDATA_T, LDATA_T>(
       ORG_SEQ_FILE, sequences, COMPUTE_TIME * BATCH_SIZE * SAMPLE_LEN);
@@ -148,7 +150,7 @@ printf("size:\t%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE *
 #ifdef __SDSCC__
   f_ctr.start();
 #endif
-/*
+
   wrapper_rnn_fc(rnn_kernel_transpose, rnn_recurrent_kernel_transpose,
                  rnn_bias, fc_kernel_transpose, fc_bias, rnn_input_states, 
                  fc_output_feature_map);
@@ -168,7 +170,7 @@ printf("size:\t%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE *
                      softmax_result + softmax_offset);
     argmax<FDATA_T, IDATA_T>(fc_output_feature_map + fc_output_offset, 
                              argmax_result + argmax_offset);
-  }*/
+  }
   copy_data<IDATA_T, LDATA_T>(argmax_result, C_result, COMPUTE_TIME*BATCH_SIZE);
 
   // Correctness
