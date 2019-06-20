@@ -14,9 +14,9 @@ void fc_load_input_feature_map(
 void fc_load_kernel(FDATA_T kernel_DRAM_part[FC_INPUT_SIZE], 
                     FDATA_T kernel_reg[FC_INPUT_SIZE]);
 
-void fc_compute(FDATA_T input_feature_map_reg[FC_TILE_BATCH][FC_INPUT_SIZE],  
+void fc_compute(FDATA_T input_feature_map_reg[BATCH_SIZE][FC_INPUT_SIZE],  
                 FDATA_T kernel_reg[FC_INPUT_SIZE],
-                FDATA_T output_feature_map_reg[FC_TILE_BATCH]);
+                FDATA_T output_feature_map_reg[BATCH_SIZE]);
 
 void fc_load_bias(FDATA_T bias[FC_OUTPUT_SIZE], 
                   FDATA_T bias_reg[FC_OUTPUT_SIZE]);
