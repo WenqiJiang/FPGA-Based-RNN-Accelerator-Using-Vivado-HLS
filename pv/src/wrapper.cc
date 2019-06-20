@@ -3,22 +3,6 @@
 #include "rnn.h"
 #include "fc.h"
 
-// #pragma SDS data copy(rnn_kernel[0: RNN_INPUT_SIZE * RNN_STATE_SIZE])
-// #pragma SDS data copy(rnn_recurrent_kernel \
-//                            [0: RNN_STATE_SIZE * RNN_STATE_SIZE])
-// #pragma SDS data copy(rnn_bias[0: RNN_STATE_SIZE])
-
-// #pragma SDS data zero_copy(fc_kernel[0: FC_OUTPUT_SIZE * FC_INPUT_SIZE])
-// #pragma SDS data zero_copy(fc_bias[0: FC_OUTPUT_SIZE])
-
-// #pragma SDS data zero_copy( \
-//     input_state[0: COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE * RNN_INPUT_SIZE])
-// #pragma SDS data zero_copy(output[0:COMPUTE_TIME * BATCH_SIZE * FC_OUTPUT_SIZE])
-
-// #pragma DATA ACCESS_PATTERN(rnn_kernel:SEQUENTIAL, \
-//                             rnn_recurrent_kernel:SEQUENTIAL, \
-//                             rnn_bias:SEQUENTIAL)
-
 void copy_array(FDATA_T* src, FDATA_T* dst, LDATA_T len) {
 #pragma HLS inline region
   for (LDATA_T i = 0; i < len; i++)
@@ -81,29 +65,41 @@ void wrapper_rnn_fc(
           /* input_state = */input_state + addr_offset1,
           rnn_bias_BRAM, rnn_kernel_BRAM, rnn_recurrent_kernel_BRAM, 
           /* output_state = */state1);
-#ifdef DEBUG
-	if (i == 24) {
-		//printf("step 1 output:\n RNN_STATE_SIZE: %d", RNN_STATE_SIZE);
-		for (LDATA_T j = 0; j < 2 * RNN_STATE_SIZE; j++) {
-			printf("%f\t", TOFLOAT(state1[j]));
-		}
-		printf("\n");
-	}
+
+#define DEBUG_RNN
+#ifdef DEBUG_RNN
+  if (compute_time == 0 && i == 0) {
+    //printf("step 1 output:\n RNN_STATE_SIZE: %d", RNN_STATE_SIZE);
+    for (LDATA_T j = 0; j < 2 * RNN_STATE_SIZE; j++) {
+      printf("%f\t", TOFLOAT(state1[j]));
+    }
+    printf("\n");
+  }
 #endif
       rnn(/* last state = */state1, 
           /* input_state = */input_state + addr_offset2, 
           rnn_bias_BRAM, rnn_kernel_BRAM, rnn_recurrent_kernel_BRAM, 
           /* output_state = */state0);
-#ifdef DEBUG
-	if (i == 24) {
+#ifdef DEBUG_RNN
+  if (compute_time == 0 && i == 0) {
                 //printf("step 1 output:\n RNN_STATE_SIZE: %d", RNN_STATE_SIZE);
                 for (LDATA_T j = 0; j < 2 * RNN_STATE_SIZE; j++) {
-                	printf("%f\t", TOFLOAT(state0[j]));    
-		}
-		printf("\n");
+                  printf("%f\t", TOFLOAT(state0[j]));    
+    }
+    printf("\n");
          }
 #endif
     }
+
+//#define DEBUG
+#ifdef DEBUG
+  if (compute_time == 0) {
+    for (LDATA_T i = 0; i < 2 * RNN_STATE_SIZE; i++) {
+      printf("%f\t", TOFLOAT(state0[i]));
+    }
+    printf("\n");
+  }
+#endif
 
     LDATA_T addr_offset_fc = compute_time * BATCH_SIZE * FC_OUTPUT_SIZE;
     // the last output state is state0, feed LDATA_To fc layer
@@ -111,7 +107,3 @@ void wrapper_rnn_fc(
        /* output_feature_map = */output + addr_offset_fc);
   }
 }
-
-// advanced architecture 3
-// for fc layer, only compute a tile at a time, 
-// use load, compute, store structure and cover the DRAM access time

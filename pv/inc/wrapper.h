@@ -1,5 +1,8 @@
 #pragma once
 
+#include "constants.h"
+#include "types.h"
+
 void wrapper_rnn_fc(
     FDATA_T rnn_kernel[RNN_INPUT_SIZE * RNN_STATE_SIZE], 
     FDATA_T rnn_recurrent_kernel[RNN_STATE_SIZE * RNN_STATE_SIZE], 

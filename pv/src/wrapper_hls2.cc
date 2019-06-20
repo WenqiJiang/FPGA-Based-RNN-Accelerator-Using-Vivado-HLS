@@ -2,8 +2,8 @@
 
 #include "types.h"
 #include "constants.h"
-#include "rnn.h"
-#include "fc.h"
+#include "rnn_hls2.h"
+#include "fc_hls2.h"
 #include "utils.h"
 
 // software control of 2 HW functions
@@ -19,9 +19,9 @@ void wrapper_rnn_fc(
 
   // malloc for rnn layer outputs
   FDATA_T* rnn_output_state = (FDATA_T*) 
-      MALLOC(sizeof(FDATA_T) * BATCH_SIZE * RNN_STATE_SIZE);
+      malloc(sizeof(FDATA_T) * BATCH_SIZE * RNN_STATE_SIZE);
   FDATA_T* output_transpose = (FDATA_T*)
-      MALLOC(sizeof(FDATA_T) * FC_OUTPUT_SIZE * BATCH_SIZE);
+      malloc(sizeof(FDATA_T) * FC_OUTPUT_SIZE * BATCH_SIZE);
   // 1,000 samples in total, 64 for 1 batch, so 15 iterations
   for (LDATA_T compute_time = 0; compute_time < COMPUTE_TIME; compute_time++) {
 
@@ -31,18 +31,27 @@ void wrapper_rnn_fc(
     
     wrapper_rnn(rnn_bias, rnn_kernel, rnn_recurrent_kernel, 
                 input_state + input_state_offset, rnn_output_state); 
-
+#define DEBUG
+#ifdef DEBUG
+  if (compute_time == 0) {
+    //printf("step 1 output:\n RNN_STATE_SIZE: %d", RNN_STATE_SIZE);
+    for (LDATA_T j = 0; j < 2 * RNN_STATE_SIZE; j++) {
+      printf("%f\t", TOFLOAT(rnn_output_state[j]));    
+    }
+    printf("\n");
+  }
+#endif
     // fc wrapper, 64 samples
-    LDATA_T output_state_offset = compute_time * BATCH_SIZE * FC_OUTPUT_SIZE;
+    IDATA_T output_state_offset = compute_time * BATCH_SIZE * FC_OUTPUT_SIZE;
     wrapper_fc(/* input_feature_map = */rnn_output_state, fc_bias, fc_kernel, 
                /* output_feature_map = */output_transpose);
-    transpose<FDATA_T,LDATA_T>(/* src = */output_transpose, 
+    transpose<FDATA_T,IDATA_T>(/* src = */output_transpose, 
               /* dst = */output + output_state_offset, 
               /* src_row = */FC_OUTPUT_SIZE, /* src_col = */BATCH_SIZE);
   }
 
-  MFREE(rnn_output_state);
-  MFREE(output_transpose);
+  free(rnn_output_state);
+  free(output_transpose);
 }
 
 // advanced architecture 3

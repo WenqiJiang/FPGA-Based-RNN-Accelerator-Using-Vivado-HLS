@@ -78,17 +78,14 @@ VPATH += ../inc
 VPATH += ../src
 
 CXX_SOURCES :=
-#CXX_SOURCES += fc.cc
-CXX_SOURCES += fc_hls2.cc
-#CXX_SOURCES += rnn.cc
-CXX_SOURCES += rnn_hls2.cc
+CXX_SOURCES += fc.cc
+CXX_SOURCES += rnn.cc
 CXX_SOURCES += init.cc
 CXX_SOURCES += main.cc
 CXX_SOURCES += utils.cc
 CXX_SOURCES += softmax.cc
 CXX_SOURCES += activation.cc
-#CXX_SOURCES += wrapper.cc
-CXX_SOURCES += wrapper_hls2.cc
+CXX_SOURCES += wrapper.cc
 
 CXX_HEADERS :=
 CXX_HEADERS += activation.h
