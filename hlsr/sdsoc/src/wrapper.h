@@ -10,4 +10,6 @@ void wrapper_rnn_fc(
     FDATA_T fc_kernel[FC_OUTPUT_SIZE * FC_INPUT_SIZE], 
     FDATA_T fc_bias[FC_OUTPUT_SIZE], 
     FDATA_T input_state[COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE*RNN_INPUT_SIZE], 
-    FDATA_T output[COMPUTE_TIME * BATCH_SIZE * FC_OUTPUT_SIZE]);
+    FDATA_T output[COMPUTE_TIME * BATCH_SIZE * FC_OUTPUT_SIZE],
+    long rnn_clock_cycle_records[COMPUTE_TIME],
+    long fc_clock_cycle_records[COMPUTE_TIME]);

@@ -1,5 +1,7 @@
 #include "wrapper.h"
 
+#include <ctime>
+
 #include "types.h"
 #include "constants.h"
 #include "rnn.h"
@@ -15,7 +17,9 @@ void wrapper_rnn_fc(
     FDATA_T fc_kernel[FC_OUTPUT_SIZE * FC_INPUT_SIZE], 
     FDATA_T fc_bias[FC_OUTPUT_SIZE], 
     FDATA_T input_state[COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE*RNN_INPUT_SIZE], 
-    FDATA_T output[COMPUTE_TIME * BATCH_SIZE * FC_OUTPUT_SIZE]) {
+    FDATA_T output[COMPUTE_TIME * BATCH_SIZE * FC_OUTPUT_SIZE],
+    long rnn_clock_cycle_records[COMPUTE_TIME],
+    long fc_clock_cycle_records[COMPUTE_TIME]) {
 
 #ifdef __SDSCC__
   perf_counter f_ctr;
@@ -31,7 +35,6 @@ void wrapper_rnn_fc(
     // rnn wrapper, 50 timesteps, 64 samples
     LDATA_T input_state_offset = 
         compute_time * SAMPLE_LEN * BATCH_SIZE * RNN_INPUT_SIZE; 
-    printf("Iteration %d, computing RNN layers...\n", compute_time);
 #ifdef __SDSCC__
     f_ctr.start();
 #endif
@@ -39,11 +42,11 @@ void wrapper_rnn_fc(
                 input_state + input_state_offset, rnn_output_state); 
 #ifdef __SDSCC__
     f_ctr.stop();
-    printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
+    rnn_clock_cycle_records[compute_time] = f_ctr.avg_cpu_cycles();
+    f_ctr.reset();
 #endif
     // fc wrapper, 64 samples
     LDATA_T output_state_offset = compute_time * BATCH_SIZE * FC_OUTPUT_SIZE;
-    printf("Iteration %d, computing FC layers...\n", compute_time);
 #ifdef __SDSCC__
     f_ctr.start();
 #endif
@@ -51,7 +54,8 @@ void wrapper_rnn_fc(
                /* output_feature_map = */output_transpose);
 #ifdef __SDSCC__
     f_ctr.stop();
-    printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
+    fc_clock_cycle_records[compute_time] = f_ctr.avg_cpu_cycles();
+    f_ctr.reset();
 #endif
     transpose<FDATA_T,LDATA_T>(/* src = */output_transpose, 
               /* dst = */output + output_state_offset, 

@@ -1,12 +1,11 @@
 #include <cstdio>
 #include <cstdlib>
+#include <ctime>
 
 #include "activation.h"
 #include "config.h"
 #include "constants.h"
-// #include "fc.h"
 #include "init.h"
-// #include "rnn.h"
 #include "softmax.h"
 #include "types.h"
 #include "utils.h"
@@ -20,11 +19,12 @@ int main(int argc, char *argv[]) {
   perf_counter f_ctr;
 #endif
   printf("INFO: memory alloc\n\r");
-  // declare weights
-  // embedding
 #ifdef __SDSCC__
   f_ctr.start();
 #endif
+
+  // declare weights
+  // embedding
   FDATA_T* word_embedding = 
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * WORD_NUM * WORD_SIZE);
 
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
   FDATA_T* rnn_input_states = /* store all input states */
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * 
                         BATCH_SIZE * RNN_INPUT_SIZE);
-printf("size:\t%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE * RNN_INPUT_SIZE);
+
   // FC
   FDATA_T* fc_bias = 
       (FDATA_T*) MALLOC(sizeof(FDATA_T) * FC_OUTPUT_SIZE);
@@ -98,13 +98,13 @@ printf("size:\t%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE *
 #ifdef __SDSCC__
   f_ctr.stop();
   printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
+  f_ctr.reset();
 #endif
   printf("INFO: model load\n\r");
 
 #ifdef DEBUG
   print_data<FDATA_T, LDATA_T>(fc_kernel, FC_INPUT_SIZE * FC_OUTPUT_SIZE);
 #endif
-
   printf("INFO: data load\n\r");
 #ifdef __SDSCC__
   f_ctr.start();
@@ -145,7 +145,12 @@ printf("size:\t%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE *
 #ifdef __SDSCC__
   f_ctr.stop();
   printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
+  f_ctr.reset();
 #endif
+
+  // pass into wrapper for hardware profiling
+  long rnn_clock_cycle_records[COMPUTE_TIME];
+  long fc_clock_cycle_records[COMPUTE_TIME];
   printf("INFO: run inference\n\r");
 #ifdef __SDSCC__
   f_ctr.start();
@@ -153,10 +158,34 @@ printf("size:\t%d\n", sizeof(FDATA_T) * COMPUTE_TIME * SAMPLE_LEN * BATCH_SIZE *
 
   wrapper_rnn_fc(rnn_kernel_transpose, rnn_recurrent_kernel_transpose,
                  rnn_bias, fc_kernel_transpose, fc_bias, rnn_input_states, 
-                 fc_output_feature_map);
+                 fc_output_feature_map, rnn_clock_cycle_records,
+                 fc_clock_cycle_records);
 #ifdef __SDSCC__
   f_ctr.stop();
-  printf("INFO:   cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
+  printf("INFO: whole wrapper cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
+  printf("INFO: cpu clock time: %lu\n\r", CLOCKS_PER_SEC);
+  printf("INFO: whole wrapper cpu time: %l\n\r", int(f_ctr.avg_cpu_cycles()) *
+                                           int(CLOCKS_PER_SEC));
+  f_ctr.reset(); 
+
+  long total_rnn_clock_cycle = 0;
+  long total_fc_clock_cycle = 0;
+
+  for (LDATA_T compute_time = 0; compute_time < COMPUTE_TIME; compute_time++) {
+    printf("INFO: iteration %d:\n", compute_time);
+    printf("INFO: rnn clock cycle: %l\trnn cpu time:%l\n\r",
+        rnn_clock_cycle_records[compute_time], 
+        rnn_clock_cycle_records[compute_time] * CLOCKS_PER_SEC);
+    printf("INFO: fc clock cycle: %l\tfc cpu time:%l\n\r",
+        fc_clock_cycle_records[compute_time], 
+        fc_clock_cycle_records[compute_time] * CLOCKS_PER_SEC);
+    total_rnn_clock_cycle += rnn_clock_cycle_records[compute_time];
+    total_fc_clock_cycle += fc_clock_cycle_records[compute_time];
+  }
+  printf("INFO: total hardware time:\n");
+  printf("INFO: cpu cycle: %l\tcpu time:%l\n\r", 
+      total_rnn_clock_cycle + total_fc_clock_cycle,
+      (total_rnn_clock_cycle + total_fc_clock_cycle) * CLOCKS_PER_SEC);
 #endif
 
   // Softmax and Argmax
