@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
   f_ctr.stop();
   printf("INFO: whole wrapper cpu cycles %lu\n\r", f_ctr.avg_cpu_cycles());
   printf("INFO: cpu clock time: %lu\n\r", CLOCKS_PER_SEC);
-  printf("INFO: whole wrapper cpu time: %l\n\r", int(f_ctr.avg_cpu_cycles()) *
+  printf("INFO: whole wrapper cpu time: %lu\n\r", int(f_ctr.avg_cpu_cycles()) *
                                            int(CLOCKS_PER_SEC));
   f_ctr.reset(); 
 
@@ -173,17 +173,17 @@ int main(int argc, char *argv[]) {
 
   for (LDATA_T compute_time = 0; compute_time < COMPUTE_TIME; compute_time++) {
     printf("INFO: iteration %d:\n", compute_time);
-    printf("INFO: rnn clock cycle: %l\trnn cpu time:%l\n\r",
+    printf("INFO: rnn clock cycle: %lu\trnn cpu time: %lu\n\r",
         rnn_clock_cycle_records[compute_time], 
         rnn_clock_cycle_records[compute_time] * CLOCKS_PER_SEC);
-    printf("INFO: fc clock cycle: %l\tfc cpu time:%l\n\r",
+    printf("INFO: fc clock cycle: %lu\tfc cpu time: %lu\n\r",
         fc_clock_cycle_records[compute_time], 
         fc_clock_cycle_records[compute_time] * CLOCKS_PER_SEC);
     total_rnn_clock_cycle += rnn_clock_cycle_records[compute_time];
     total_fc_clock_cycle += fc_clock_cycle_records[compute_time];
   }
   printf("INFO: total hardware time:\n");
-  printf("INFO: cpu cycle: %l\tcpu time:%l\n\r", 
+  printf("INFO: cpu cycle: %lu\tcpu time: %lu\n\r", 
       total_rnn_clock_cycle + total_fc_clock_cycle,
       (total_rnn_clock_cycle + total_fc_clock_cycle) * CLOCKS_PER_SEC);
 #endif
